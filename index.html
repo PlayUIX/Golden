@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#070604">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Golden Cardápio">
 <title>Golden Cardápio</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -60,6 +62,60 @@ html,body { height:100%; background:var(--bg-0); color:var(--text); font-family:
 @keyframes floatUp{ 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-120vh) rotate(720deg);opacity:0} }
 @keyframes starPop{ 0%{transform:scale(0) rotate(-30deg);opacity:0} 60%{transform:scale(1.2) rotate(5deg);opacity:1} 100%{transform:scale(1) rotate(0deg);opacity:1} }
 @keyframes barGlow{ 0%,100%{box-shadow:0 0 8px rgba(226,185,59,.4)} 50%{box-shadow:0 0 22px rgba(226,185,59,.8)} }
+
+/* ── INSTALL SCREEN ── */
+#pgInstall {
+  position:fixed; inset:0; z-index:99999;
+  background:radial-gradient(ellipse at 50% -10%,rgba(226,185,59,.2) 0%,transparent 65%),var(--bg-0);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:24px; transition:opacity .5s ease;
+}
+#pgInstall.inst-hidden { opacity:0; pointer-events:none; }
+.inst-logo {
+  display:flex; flex-direction:column; align-items:center;
+  margin-bottom:32px; animation:starPop .7s cubic-bezier(.4,0,.2,1) forwards;
+}
+.inst-logo img { width:100px; margin-bottom:14px; filter:drop-shadow(0 10px 35px rgba(226,185,59,.45)); animation:pulse 2.5s ease-in-out infinite; }
+.inst-card {
+  width:min(400px,100%);
+  background:rgba(24,20,8,.88); backdrop-filter:blur(30px);
+  border:1px solid rgba(226,185,59,.18); border-radius:28px;
+  padding:28px 24px; box-shadow:0 40px 80px -20px rgba(0,0,0,.9), inset 0 1px 0 rgba(226,185,59,.1);
+  animation:pgIn .5s .2s cubic-bezier(.4,0,.2,1) both;
+}
+.inst-title { font-size:19px; font-weight:800; color:var(--gold-1); text-align:center; margin-bottom:8px; }
+.inst-sub { font-size:13px; color:var(--muted); text-align:center; margin-bottom:22px; line-height:1.6; }
+.inst-feats { display:flex; flex-direction:column; gap:10px; margin-bottom:26px; }
+.inst-feat {
+  display:flex; align-items:center; gap:13px;
+  background:rgba(226,185,59,.07); border:1px solid rgba(226,185,59,.12);
+  border-radius:12px; padding:12px 16px;
+  font-size:14px; font-weight:600; color:var(--text);
+}
+.inst-feat-icon { font-size:21px; flex-shrink:0; }
+.btn-instalar {
+  width:100%; padding:17px;
+  background:linear-gradient(135deg,var(--gold-3),var(--gold-2),var(--gold-1));
+  border:none; border-radius:16px; cursor:pointer;
+  font-size:16px; font-weight:800; color:var(--bg-0);
+  font-family:'Nunito',sans-serif; letter-spacing:.04em;
+  box-shadow:0 8px 24px rgba(226,185,59,.4); transition:all .3s; margin-bottom:13px;
+}
+.btn-instalar:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(226,185,59,.55); }
+.btn-instalar:active { transform:scale(.97); }
+.btn-skip {
+  width:100%; padding:13px; background:transparent;
+  border:1px solid rgba(226,185,59,.2); border-radius:16px; cursor:pointer;
+  font-size:14px; font-weight:600; color:var(--muted);
+  font-family:'Nunito',sans-serif; transition:all .3s;
+}
+.btn-skip:hover { border-color:rgba(226,185,59,.4); color:var(--gold-1); }
+.inst-manual {
+  display:none; margin-top:16px; padding:14px 16px;
+  background:rgba(226,185,59,.05); border:1px solid rgba(226,185,59,.1);
+  border-radius:12px; font-size:12px; color:var(--muted); text-align:center; line-height:1.7;
+}
+.inst-manual.show { display:block; }
 
 /* ── LOADING SCREEN ── */
 #gcLoad {
@@ -704,6 +760,30 @@ html,body { height:100%; background:var(--bg-0); color:var(--text); font-family:
 </style>
 </head>
 <body>
+
+<!-- ══ INSTALL SCREEN ══ -->
+<div id="pgInstall">
+  <div class="inst-logo">
+    <img src="logo/logo.png" alt="Golden" onerror="this.style.display='none'">
+    <div class="wordmark" style="font-size:clamp(36px,10vw,50px)">GOLDEN</div>
+    <div class="wordsub">CARDÁPIO DIGITAL</div>
+  </div>
+  <div class="inst-card">
+    <div class="inst-title">📲 Instalar o App</div>
+    <div class="inst-sub">Adicione à sua tela inicial e acesse<br>sem precisar abrir o navegador</div>
+    <div class="inst-feats">
+      <div class="inst-feat"><span class="inst-feat-icon">⚡</span>Acesso rápido com 1 toque</div>
+      <div class="inst-feat"><span class="inst-feat-icon">📱</span>Tela cheia como app nativo</div>
+      <div class="inst-feat"><span class="inst-feat-icon">🔖</span>Sempre à mão na tela inicial</div>
+    </div>
+    <button class="btn-instalar" id="btnInstalar" onclick="instalarApp()">⬇️ &nbsp;Instalar App</button>
+    <button class="btn-skip" onclick="entrarNoApp()">Continuar sem instalar</button>
+    <div class="inst-manual" id="instManual">
+      📌 <strong>iOS Safari:</strong> toque em Compartilhar ↑ → <strong>Adicionar à Tela de Início</strong><br>
+      📌 <strong>Android Chrome:</strong> menu ⋮ → <strong>Adicionar à tela inicial</strong>
+    </div>
+  </div>
+</div>
 
 <!-- Loading Screen -->
 <div id="gcLoad">
@@ -1909,9 +1989,96 @@ function tentarIniciar(n) {
   }
 }
 
-window.addEventListener('load', () => {
+// ══════════════════════════════════════════
+//  PWA INSTALL
+// ══════════════════════════════════════════
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  toast('✅ App instalado com sucesso!');
+});
+
+async function instalarApp() {
+  localStorage.setItem('golden_install_shown', '1');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+  entrarNoApp();
+}
+
+function entrarNoApp() {
+  localStorage.setItem('golden_install_shown', '1');
+  const inst = document.getElementById('pgInstall');
+  if (inst) {
+    inst.classList.add('inst-hidden');
+    setTimeout(() => { inst.style.display = 'none'; }, 500);
+  }
+  const gcl = document.getElementById('gcLoad');
+  if (gcl) gcl.style.display = 'flex';
   initParticles();
   tentarIniciar(20);
+}
+
+window.addEventListener('load', () => {
+  // Registra Service Worker para habilitar critérios PWA
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      self.addEventListener('install', () => self.skipWaiting());
+      self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+      self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+    `;
+    const swBlob = new Blob([swCode], { type: 'text/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+  }
+
+  // Injeta manifest dinamicamente
+  const manifest = {
+    name: 'Golden Cardápio',
+    short_name: 'Golden',
+    description: 'Sistema de pedidos de refeições — Golden Shopping',
+    start_url: './',
+    display: 'standalone',
+    orientation: 'portrait',
+    background_color: '#070604',
+    theme_color: '#070604',
+    icons: [
+      { src: 'logo/logo.png', sizes: '192x192', type: 'image/png' },
+      { src: 'logo/logo.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  };
+  const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const mLink = document.createElement('link');
+  mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(mBlob);
+  document.head.appendChild(mLink);
+
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
+  const alreadyShown = localStorage.getItem('golden_install_shown');
+
+  if (isStandalone || alreadyShown) {
+    // Já instalado ou já mostrou a tela — vai direto pro app
+    document.getElementById('pgInstall').style.display = 'none';
+    initParticles();
+    tentarIniciar(20);
+  } else {
+    // Mostra tela de instalação
+    document.getElementById('gcLoad').style.display = 'none';
+    // Se não tiver prompt disponível depois de 2s (iOS/Firefox), mostra instrução manual
+    setTimeout(() => {
+      if (!deferredPrompt) {
+        document.getElementById('instManual')?.classList.add('show');
+        const btn = document.getElementById('btnInstalar');
+        if (btn) btn.style.display = 'none';
+      }
+    }, 2000);
+  }
 });
 </script>
 </body>
