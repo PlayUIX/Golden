@@ -1420,14 +1420,14 @@ function copiarPedido(userId, wk){
 
 function lembrarFuncionario(nome){
   const msg=`Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
-  // Tenta Web Share API (mobile)
-  if(navigator.share){
-    navigator.share({title:'Lembrete Golden Cardápio',text:msg}).catch(()=>{});
-  } else {
-    // Desktop: copia mensagem
-    navigator.clipboard?.writeText(msg).then(()=>toast(`📋 Mensagem copiada — envie para ${nome}!`,'info'))
-    .catch(()=>toast(`Lembre ${nome} de fazer o pedido!`,'info'));
-  }
+  navigator.clipboard?.writeText(msg)
+    .then(()=>toast(`📋 Mensagem copiada! Envie para ${nome} no WhatsApp`,'info'))
+    .catch(()=>{
+      const ta=document.createElement('textarea');ta.value=msg;
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');
+      document.body.removeChild(ta);
+      toast(`📋 Mensagem copiada! Envie para ${nome}`,'info');
+    });
 }
 
 function limparSemana(){
