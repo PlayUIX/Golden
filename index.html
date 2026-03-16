@@ -16,12 +16,14 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 <style>
 :root{
-  --gold-1:#F8E88A;--gold-2:#E2B93B;--gold-3:#C9960C;--gold-4:#8B6208;--gold-5:#3D2900;
-  --bg-0:#070604;--bg-1:#0F0D08;--bg-2:#181408;--bg-3:#211C0D;--bg-4:#2C2410;
-  --border:rgba(226,185,59,.15);--border-2:rgba(226,185,59,.3);
-  --text:#F0E2C0;--muted:#7A6830;--red:#C0392B;--green:#1D6A3A;
-  --radius:20px;--radius-sm:14px;--radius-xs:9px;
-  --shadow:0 25px 50px -12px rgba(0,0,0,.8);--shadow-gold:0 20px 40px -15px rgba(226,185,59,.3);
+  /* Golden Shopping Calhau — paleta oficial: preto luxo + ouro quente + âmbar */
+  --gold-1:#FFE47A;--gold-2:#D4A017;--gold-3:#B8860B;--gold-4:#7A5C00;--gold-5:#3D2E00;
+  --amber:#C8860A;--cream:#F5E6C8;
+  --bg-0:#060504;--bg-1:#0D0B06;--bg-2:#141108;--bg-3:#1C160A;--bg-4:#24190C;
+  --border:rgba(212,160,23,.18);--border-2:rgba(212,160,23,.38);
+  --text:#F0DFB0;--muted:#7A6520;--red:#B03020;--green:#1A5A30;
+  --radius:18px;--radius-sm:12px;--radius-xs:8px;
+  --shadow:0 8px 32px rgba(0,0,0,.7);--shadow-gold:0 8px 28px rgba(212,160,23,.25);
   --font:'Sora',sans-serif;
   --font-size-base:16px;
 }
@@ -53,8 +55,8 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 #gcLoad{position:fixed;inset:0;background:var(--bg-0);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .5s}
 .gc-logo-wrap{position:relative;display:flex;align-items:center;justify-content:center}
 .gc-logo-ring{position:absolute;width:160px;height:160px;border:1.5px solid rgba(226,185,59,.12);border-radius:50%}
-.gc-logo-ring2{position:absolute;width:195px;height:195px;border:1px solid rgba(226,185,59,.06);border-radius:50%;animation:spin 8s linear infinite;border-top-color:rgba(226,185,59,.25)}
-.gc-logo{width:120px;height:120px;object-fit:contain;animation:pulse 2.5s ease-in-out infinite;filter:drop-shadow(0 0 40px rgba(226,185,59,.55))}
+.gc-logo-ring2{position:absolute;width:195px;height:195px;border:1px solid rgba(226,185,59,.06);border-radius:50%;display:none;border-top-color:rgba(226,185,59,.25)}
+.gc-logo{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 0 40px rgba(226,185,59,.55))}
 .gc-spinner{width:44px;height:44px;position:relative}
 .gc-spinner-ring{position:absolute;inset:0;border:2px solid rgba(226,185,59,.08);border-radius:50%}
 .gc-spinner-arc{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--gold-2);border-radius:50%;animation:spin .9s linear infinite}
@@ -64,7 +66,7 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .gc-dots span:nth-child(3){animation-delay:.4s}
 
 /* TOPBAR */
-.topbar{background:rgba(7,6,4,.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300}
+.topbar{background:rgba(7,6,4,.97);border-bottom:1px solid var(--border);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300}
 .tb-brand{display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--gold-2),var(--gold-1));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .tb-brand img{height:32px;filter:drop-shadow(0 2px 8px rgba(226,185,59,.35))}
 .tb-actions{display:flex;align-items:center;gap:10px}
@@ -77,15 +79,15 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 
 /* LOGIN PAGE */
 #pgLogin{justify-content:center;align-items:center;padding:20px;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,rgba(226,185,59,.18) 0%,transparent 65%),var(--bg-0);position:relative;overflow:hidden}
-.login-vol-btn{position:absolute;top:18px;right:18px;z-index:10;width:46px;height:46px;border-radius:50%;border:2px solid var(--border);background:rgba(24,20,8,.7);backdrop-filter:blur(10px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .3s}
+.login-vol-btn{position:absolute;top:18px;right:18px;z-index:10;width:46px;height:46px;border-radius:50%;border:2px solid var(--border);background:rgba(24,20,8,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .3s}
 .login-vol-btn:hover{border-color:var(--gold-2);transform:scale(1.08)}
 .login-shell{width:min(420px,100%);display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
 .login-brand{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;text-align:center;animation:starPop .7s cubic-bezier(.4,0,.2,1) forwards}
 .login-brand img{width:100px;height:auto;margin-bottom:14px;filter:drop-shadow(0 10px 35px rgba(226,185,59,.45));transition:all .3s}
 .login-brand img:hover{transform:scale(1.06) rotate(-2deg)}
-.wordmark{font-family:'Cormorant Garamond',serif;font-weight:900;font-size:clamp(48px,13vw,64px);letter-spacing:.12em;background:linear-gradient(180deg,#F8E88A 0%,#E2B93B 40%,#8B6208 70%,#C9960C 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.wordmark{font-family:'Cormorant Garamond',serif;font-weight:900;font-size:clamp(48px,13vw,64px);letter-spacing:.12em;background:linear-gradient(180deg,#FFE47A 0%,#D4A017 40%,#7A5C00 70%,#B8860B 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
 .wordsub{font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);margin-top:10px}
-.login-card{width:100%;background:rgba(24,20,8,.88);backdrop-filter:blur(30px);border:1px solid rgba(226,185,59,.18);border-radius:28px;padding:32px 26px 28px;box-shadow:0 40px 80px -20px rgba(0,0,0,.9),inset 0 1px 0 rgba(226,185,59,.1);animation:pgIn .5s .1s cubic-bezier(.4,0,.2,1) both}
+.login-card{width:100%;background:rgba(24,20,8,.88);border:1px solid rgba(226,185,59,.18);border-radius:28px;padding:32px 26px 28px;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:pgIn .5s .1s cubic-bezier(.4,0,.2,1) both}
 .lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
 .inp{width:100%;background:rgba(255,255,255,.04);border:2px solid rgba(226,185,59,.13);color:var(--text);padding:18px 20px;border-radius:var(--radius-sm);font-size:20px;font-family:var(--font);font-weight:600;outline:none;transition:all .3s;margin-bottom:20px}
 .inp:focus{border-color:var(--gold-3);background:rgba(226,185,59,.07);box-shadow:0 0 0 3px rgba(226,185,59,.1)}
@@ -198,7 +200,7 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .suc-logout:hover{background:rgba(192,57,43,.18)}
 
 /* ADMIN PAGE */
-.adm-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;background:rgba(7,6,4,.97);backdrop-filter:blur(16px);position:sticky;top:56px;z-index:200}
+.adm-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;background:rgba(7,6,4,.97);position:sticky;top:56px;z-index:200}
 .adm-tabs::-webkit-scrollbar{display:none}
 .atab{background:transparent;border:none;border-bottom:3px solid transparent;color:var(--muted);padding:12px 16px 10px;font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;transition:all .2s;flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
 .atab .atab-ico{font-size:22px;line-height:1}
@@ -282,7 +284,7 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .btn-danger:hover{background:rgba(192,57,43,.22)}
 
 /* DRAWER */
-.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s}
 .drawer-overlay.open{opacity:1;pointer-events:all}
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(360px,90vw);background:var(--bg-1);border-left:1px solid var(--border);z-index:410;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:-18px 0 60px rgba(0,0,0,.7)}
 .drawer.open{transform:translateX(0)}
@@ -308,7 +310,7 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .btn-logout-full:hover{background:rgba(192,57,43,.2)}
 
 /* TOAST */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);padding:13px 28px;border-radius:50px;font-size:14px;font-weight:700;z-index:9999;transition:transform .3s cubic-bezier(.4,0,.2,1);white-space:nowrap;box-shadow:0 12px 40px rgba(0,0,0,.5);pointer-events:none;backdrop-filter:blur(12px);max-width:90vw;text-align:center;font-family:var(--font)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);padding:13px 28px;border-radius:50px;font-size:14px;font-weight:700;z-index:9999;transition:transform .3s cubic-bezier(.4,0,.2,1);white-space:nowrap;box-shadow:0 12px 40px rgba(0,0,0,.5);pointer-events:none;max-width:90vw;text-align:center;font-family:var(--font)}
 .toast.ok{background:rgba(12,55,28,.95);border:1px solid #2a7040;color:#a0efb0}
 .toast.err{background:rgba(65,12,12,.95);border:1px solid #a03030;color:#ffaaaa}
 .toast.info{background:rgba(30,24,8,.95);border:1px solid var(--gold-4);color:var(--gold-1)}
@@ -316,9 +318,9 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .confetti-piece{position:fixed;pointer-events:none;z-index:9998;animation:confettiFall linear forwards}
 
 /* CUSTOM MODAL */
-.gmo{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.gmo{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
 .gmo.open{opacity:1;pointer-events:all}
-.gmo-box{background:var(--bg-1);border:1px solid rgba(226,185,59,.32);border-radius:24px;width:min(440px,100%);padding:28px 24px 24px;box-shadow:0 40px 100px rgba(0,0,0,.9);transform:translateY(24px) scale(.95);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative}
+.gmo-box{background:var(--bg-1);border:1px solid rgba(226,185,59,.32);border-radius:24px;width:min(440px,100%);padding:28px 24px 24px;box-shadow:0 8px 32px rgba(0,0,0,.6);transform:translateY(24px) scale(.95);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative}
 .gmo.open .gmo-box{transform:translateY(0) scale(1)}
 .gmo-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold-1);margin-bottom:4px}
 .gmo-sub{font-size:13px;color:var(--muted);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);font-weight:500}
@@ -339,9 +341,9 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .gmo-close:hover{color:var(--text);background:rgba(255,255,255,.07)}
 
 /* EMOJI PICKER */
-.epicker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s}
+.epicker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s}
 .epicker-overlay.open{opacity:1;pointer-events:all}
-.epicker-box{background:var(--bg-1);border:1px solid rgba(226,185,59,.3);border-radius:22px;width:min(420px,100%);padding:22px 20px 20px;box-shadow:0 40px 80px rgba(0,0,0,.9);transform:translateY(20px) scale(.95);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.epicker-box{background:var(--bg-1);border:1px solid rgba(226,185,59,.3);border-radius:22px;width:min(420px,100%);padding:22px 20px 20px;box-shadow:0 8px 32px rgba(0,0,0,.6);transform:translateY(20px) scale(.95);transition:transform .28s cubic-bezier(.4,0,.2,1)}
 .epicker-overlay.open .epicker-box{transform:translateY(0) scale(1)}
 .epicker-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .epicker-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--gold-1)}
@@ -360,9 +362,9 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .epick.active{background:rgba(226,185,59,.2);border-color:var(--gold-2);box-shadow:0 0 12px rgba(226,185,59,.35)}
 
 /* SETOR PICKER */
-.spicker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s}
+.spicker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s}
 .spicker-overlay.open{opacity:1;pointer-events:all}
-.spicker-box{background:var(--bg-1);border:1px solid rgba(226,185,59,.32);border-radius:24px;width:min(480px,100%);padding:24px 20px 20px;box-shadow:0 40px 80px rgba(0,0,0,.9);transform:translateY(22px) scale(.95);transition:transform .28s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
+.spicker-box{background:var(--bg-1);border:1px solid rgba(226,185,59,.32);border-radius:24px;width:min(480px,100%);padding:24px 20px 20px;box-shadow:0 8px 32px rgba(0,0,0,.6);transform:translateY(22px) scale(.95);transition:transform .28s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
 .spicker-overlay.open .spicker-box{transform:translateY(0) scale(1)}
 .spicker-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .spicker-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--gold-1)}
@@ -430,6 +432,28 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .pendente-setor{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
 .lembrar-btn{background:rgba(240,176,64,.12);border:1px solid rgba(240,176,64,.3);color:#f0b040;border-radius:8px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer;transition:all .25s;font-family:var(--font);white-space:nowrap;flex-shrink:0}
 .lembrar-btn:hover{background:rgba(240,176,64,.22);transform:scale(1.04)}
+/* PERFORMANCE: disable heavy effects */
+*{-webkit-tap-highlight-color:transparent}
+@media(max-width:600px){
+  *{transition-duration:.15s!important}
+  .dish-card::after,.dish-card::before{display:none}
+  .topbar{will-change:auto}
+}
+/* Smooth scrolling */
+.pg{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+/* Login bg — CSS stars instead of canvas */
+#pgLogin::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 15% 25%,rgba(212,160,23,.6) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 15%,rgba(212,160,23,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 35%,rgba(212,160,23,.5) 0%,transparent 100%),
+    radial-gradient(2px 2px at 25% 65%,rgba(212,160,23,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 75%,rgba(212,160,23,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 85%,rgba(212,160,23,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 35% 45%,rgba(212,160,23,.3) 0%,transparent 100%),
+    radial-gradient(2px 2px at 65% 55%,rgba(212,160,23,.25) 0%,transparent 100%);
+}
 </style>
 </head>
 <body>
@@ -448,7 +472,6 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 
 <!-- LOGIN -->
 <div id="pgLogin" class="pg">
-  <canvas id="particleCanvas" style="position:absolute;inset:0;pointer-events:none;z-index:0"></canvas>
   <button class="login-vol-btn" id="loginVolBtn" onclick="toggleVoice()" title="Ligar/desligar voz">🔊</button>
   <div class="login-shell">
     <div class="login-brand">
@@ -956,32 +979,13 @@ function doLogout() {
 }
 
 // ═══════════════════════════════════════
-//  PARTICLES
+//  PARTICLES (lightweight CSS only)
 // ═══════════════════════════════════════
-function initParticles() {
-  const canvas=document.getElementById('particleCanvas'); if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  let W,H,particles=[];
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-  resize(); window.addEventListener('resize',resize);
-  for(let i=0;i<40;i++) particles.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*2.5+.4,vx:(Math.random()-.5)*.35,vy:-(Math.random()*.55+.15),alpha:Math.random()*.6+.2,life:Math.random()});
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    particles.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.life+=.004;
-      if(p.y<-10||p.life>1){p.x=Math.random()*W;p.y=H+10;p.life=0;p.alpha=Math.random()*.6+.2;}
-      const fade=p.life<.1?p.life*10:p.life>.8?(1-p.life)*5:1;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(226,185,59,${p.alpha*fade})`;ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-}
+function initParticles() { /* removed for performance */ }
 
 function launchConfetti() {
   const colors=['#F8E88A','#E2B93B','#C9960C','#fff8e0','#ffd700'];
-  for(let i=0;i<60;i++){
+  for(let i=0;i<25;i++){
     const el=document.createElement('div');el.className='confetti-piece';
     el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${Math.random()*10+5}px;height:${Math.random()*10+5}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${Math.random()*2+1.5}s;animation-delay:${Math.random()*.8}s;`;
     document.body.appendChild(el);
@@ -992,16 +996,59 @@ function launchConfetti() {
 // ═══════════════════════════════════════
 //  USER PAGE — DAY NAVIGATION
 // ═══════════════════════════════════════
+function mostrarPedidoJaFeito(p) {
+  const el = document.getElementById('pgUser');
+  const s = SETORES_GOLDEN?.find(x=>x.id===CU?.setor)||{ico:'👤',nome:CU?.cargo||''};
+  el.innerHTML = `
+    <div class="topbar">
+      <div class="tb-brand">
+        <img src="logo.png" alt="Golden" onerror="this.style.display='none'">
+      </div>
+      <div class="tb-actions">
+        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()">${voiceEnabled?'🔊':'🔇'}</button>
+        <button class="avatar-btn" onclick="openDrawer()">${CU?.photo?`<img src="${CU.photo}">`:'👤'}</button>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center">
+      <div style="font-size:72px;margin-bottom:16px;animation:starPop .6s ease">✅</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--gold-2),var(--gold-1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">Pedido Feito!</div>
+      <div style="font-size:16px;color:var(--gold-3);font-weight:700;margin-bottom:4px">${CU?.nome}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:24px">📅 ${p.semana||weekStr()}</div>
+      <div style="width:100%;max-width:360px;margin-bottom:28px">
+        ${Object.entries(p.dias||{}).filter(([,v])=>v).map(([dia,prato])=>`
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(212,160,23,.07);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;text-align:left">
+            <span style="font-size:22px">${EM(prato)}</span>
+            <div>
+              <div style="font-size:11px;font-weight:800;color:var(--gold-3);text-transform:uppercase;letter-spacing:.08em">${dia.split('-')[0]}</div>
+              <div style="font-size:15px;font-weight:700">${prato}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="padding:16px 20px;background:rgba(212,160,23,.07);border:1px solid var(--border-2);border-radius:14px;font-size:14px;font-weight:600;color:var(--gold-2);line-height:1.6;max-width:340px;width:100%">
+        ⏳ Aguarde o cardápio da<br><strong>próxima semana</strong>!
+      </div>
+    </div>`;
+  showPage('pgUser');
+}
+
 function renderUser() {
   const el = document.getElementById('pgUser');
   const days = diasKeys();
   if (!days.length) { toast('Cardápio vazio!','err'); return; }
 
+  // Verifica se já fez pedido essa semana → mostra tela de confirmação
+  const wk = weekKey();
+  const pedidoFeito = Object.values(DB.pedidos||{}).find(
+    p => (p.userId===CU.login || p.nome===CU.nome) && p.wk===wk
+  );
+  if (pedidoFeito) {
+    mostrarPedidoJaFeito(pedidoFeito); return;
+  }
+
   el.innerHTML = `
     <div class="topbar">
       <div class="tb-brand">
         <img src="logo.png" alt="Golden" onerror="this.style.display='none'">
-        Cardápio
       </div>
       <div class="tb-actions">
         <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()" title="Ligar/desligar voz">${voiceEnabled?'🔊':'🔇'}</button>
@@ -1267,7 +1314,6 @@ function renderAdmin() {
     <div class="topbar">
       <div class="tb-brand">
         <img src="logo.png" alt="Golden" onerror="this.style.display='none'">
-        Golden Admin
       </div>
       <div class="tb-actions">
         <span class="sync-badge ${isOnline?'online':'offline'}" id="admSync">${isOnline?'🟢 Online':'🔴 Offline'}</span>
@@ -2004,7 +2050,7 @@ function showNotifBanner() {
     <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
       width:min(380px,92vw);background:var(--bg-1);border:1px solid rgba(226,185,59,.35);
       border-radius:18px;padding:18px 20px;z-index:8000;
-      box-shadow:0 20px 60px rgba(0,0,0,.8);animation:pgIn .4s ease;font-family:var(--font)">
+      box-shadow:0 8px 28px rgba(0,0,0,.6);animation:pgIn .4s ease;font-family:var(--font)">
       <div style="display:flex;align-items:flex-start;gap:14px">
         <span style="font-size:32px;line-height:1">🔔</span>
         <div style="flex:1">
@@ -2203,7 +2249,6 @@ if(window.speechSynthesis){
 }
 
 updateVoiceUI();
-initParticles();
 tentarIniciar(20);
 </script>
 </body>
