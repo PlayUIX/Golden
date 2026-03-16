@@ -16,14 +16,15 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 <style>
 :root{
-  /* Golden Shopping Calhau — paleta oficial: preto luxo + ouro quente + âmbar */
-  --gold-1:#FFE47A;--gold-2:#D4A017;--gold-3:#B8860B;--gold-4:#7A5C00;--gold-5:#3D2E00;
-  --amber:#C8860A;--cream:#F5E6C8;
-  --bg-0:#060504;--bg-1:#0D0B06;--bg-2:#141108;--bg-3:#1C160A;--bg-4:#24190C;
-  --border:rgba(212,160,23,.18);--border-2:rgba(212,160,23,.38);
-  --text:#F0DFB0;--muted:#7A6520;--red:#B03020;--green:#1A5A30;
+  /* Golden Shopping Calhau — extraído da fachada: chocolate #1C1208, creme #F0EAD8, ouro-losango #C8A020, bronze #8B6B20 */
+  --gold-1:#F5D87A;--gold-2:#C8A020;--gold-3:#A07A10;--gold-4:#6B5008;--gold-5:#332500;
+  --bronze:#8B6B20;--cream:#F0EAD8;--choco:#1C1208;
+  --sky:#6BAEC8;--forest:#3D6B25;
+  --bg-0:#0A0804;--bg-1:#100D06;--bg-2:#181208;--bg-3:#20170A;--bg-4:#2A1E0C;
+  --border:rgba(200,160,32,.2);--border-2:rgba(200,160,32,.42);
+  --text:#EEE0B8;--muted:#74601A;--red:#A82820;--green:#1A5028;
   --radius:18px;--radius-sm:12px;--radius-xs:8px;
-  --shadow:0 8px 32px rgba(0,0,0,.7);--shadow-gold:0 8px 28px rgba(212,160,23,.25);
+  --shadow:0 8px 28px rgba(0,0,0,.65);--shadow-gold:0 6px 24px rgba(200,160,32,.28);
   --font:'Sora',sans-serif;
   --font-size-base:16px;
 }
@@ -46,6 +47,9 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 @keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}60%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
 @keyframes barGlow{0%,100%{box-shadow:0 0 8px rgba(226,185,59,.4)}50%{box-shadow:0 0 22px rgba(226,185,59,.8)}}
 @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes dishPop{0%{transform:scale(1)}30%{transform:scale(.93)}65%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes checkIn{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.25) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes emojiFloat{0%{transform:scale(1) translateY(0)}50%{transform:scale(1.22) translateY(-6px)}100%{transform:scale(1.15) translateY(-3px)}}
 @keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes slideInLeft{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes slideOutLeft{from{transform:translateX(0);opacity:1}to{transform:translateX(-100%);opacity:0}}
@@ -78,16 +82,22 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .avatar-btn img{width:100%;height:100%;object-fit:cover}
 
 /* LOGIN PAGE */
-#pgLogin{justify-content:center;align-items:center;padding:20px;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,rgba(226,185,59,.18) 0%,transparent 65%),var(--bg-0);position:relative;overflow:hidden}
+#pgLogin{justify-content:center;align-items:center;padding:20px;min-height:100vh;
+  background:
+    radial-gradient(ellipse at 50% -5%,rgba(200,160,32,.22) 0%,transparent 55%),
+    radial-gradient(ellipse at 0% 100%,rgba(139,107,32,.12) 0%,transparent 50%),
+    radial-gradient(ellipse at 100% 80%,rgba(107,174,200,.06) 0%,transparent 45%),
+    var(--bg-0);
+  position:relative;overflow:hidden}
 .login-vol-btn{position:absolute;top:18px;right:18px;z-index:10;width:46px;height:46px;border-radius:50%;border:2px solid var(--border);background:rgba(24,20,8,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .3s}
 .login-vol-btn:hover{border-color:var(--gold-2);transform:scale(1.08)}
 .login-shell{width:min(420px,100%);display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
 .login-brand{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;text-align:center;animation:starPop .7s cubic-bezier(.4,0,.2,1) forwards}
 .login-brand img{width:100px;height:auto;margin-bottom:14px;filter:drop-shadow(0 10px 35px rgba(226,185,59,.45));transition:all .3s}
 .login-brand img:hover{transform:scale(1.06) rotate(-2deg)}
-.wordmark{font-family:'Cormorant Garamond',serif;font-weight:900;font-size:clamp(48px,13vw,64px);letter-spacing:.12em;background:linear-gradient(180deg,#FFE47A 0%,#D4A017 40%,#7A5C00 70%,#B8860B 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.wordmark{font-family:'Cormorant Garamond',serif;font-weight:900;font-size:clamp(48px,13vw,64px);letter-spacing:.12em;background:linear-gradient(180deg,#F5D87A 0%,#C8A020 38%,#6B5008 68%,#A07A10 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
 .wordsub{font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);margin-top:10px}
-.login-card{width:100%;background:rgba(24,20,8,.88);border:1px solid rgba(226,185,59,.18);border-radius:28px;padding:32px 26px 28px;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:pgIn .5s .1s cubic-bezier(.4,0,.2,1) both}
+.login-card{width:100%;background:rgba(20,18,8,.92);border:1px solid rgba(200,160,32,.22);border-radius:22px;padding:30px 22px 26px;box-shadow:0 8px 32px rgba(0,0,0,.6),inset 0 1px 0 rgba(200,160,32,.08);animation:pgIn .5s .1s cubic-bezier(.4,0,.2,1) both}
 .lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
 .inp{width:100%;background:rgba(255,255,255,.04);border:2px solid rgba(226,185,59,.13);color:var(--text);padding:18px 20px;border-radius:var(--radius-sm);font-size:20px;font-family:var(--font);font-weight:600;outline:none;transition:all .3s;margin-bottom:20px}
 .inp:focus{border-color:var(--gold-3);background:rgba(226,185,59,.07);box-shadow:0 0 0 3px rgba(226,185,59,.1)}
@@ -106,7 +116,7 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .pk.del:active{background:rgba(192,57,43,.22)}
 .login-err{color:#f08070;font-size:14px;font-weight:700;text-align:center;padding:12px;background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.25);border-radius:var(--radius-xs);margin:8px 0;display:none;animation:scaleIn .2s ease}
 .login-err.on{display:block}
-.btn-enter{width:100%;background:linear-gradient(135deg,var(--gold-4),var(--gold-2),var(--gold-1));border:none;color:var(--bg-0);font-size:18px;font-weight:800;padding:18px;border-radius:var(--radius-sm);cursor:pointer;margin-top:14px;transition:all .3s;box-shadow:var(--shadow-gold);letter-spacing:.06em;position:relative;overflow:hidden;font-family:var(--font)}
+.btn-enter{width:100%;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));border:none;color:var(--bg-0);font-size:18px;font-weight:800;padding:18px;border-radius:var(--radius-sm);cursor:pointer;margin-top:14px;transition:all .3s;box-shadow:var(--shadow-gold);letter-spacing:.06em;position:relative;overflow:hidden;font-family:var(--font)}
 .btn-enter::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.18),transparent 70%);transform:translateX(-100%);transition:transform .5s ease}
 .btn-enter:hover::before{transform:translateX(100%)}
 .btn-enter:hover{filter:brightness(1.1);transform:translateY(-3px);box-shadow:0 18px 40px rgba(226,185,59,.45)}
@@ -120,7 +130,7 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 .day-nav-wrap{padding:16px 18px 0;overflow:hidden}
 .progress-dots{display:flex;justify-content:center;gap:10px;margin-bottom:14px}
 .p-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(226,185,59,.25);transition:all .3s;cursor:pointer;position:relative}
-.p-dot.selected{background:linear-gradient(135deg,var(--gold-3),var(--gold-2));border-color:var(--gold-2);box-shadow:0 0 10px rgba(226,185,59,.5);transform:scale(1.2)}
+.p-dot.selected{background:linear-gradient(135deg,var(--gold-3),var(--gold-2));border-color:var(--gold-2);box-shadow:0 0 10px rgba(200,160,32,.5);transform:scale(1.25)}
 .p-dot.current{border-color:var(--gold-2);box-shadow:0 0 0 3px rgba(226,185,59,.2)}
 .p-dot.current:not(.selected){background:rgba(226,185,59,.15)}
 
@@ -137,19 +147,19 @@ html,body{height:100%;background:var(--bg-0);color:var(--text);font-family:var(-
 
 /* DISH GRID */
 .dish-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(165px,44vw),1fr));gap:14px;padding:0 16px 16px}
-.dish-card{background:linear-gradient(160deg,rgba(44,36,16,.9),rgba(24,20,8,.95));border:2px solid var(--border);border-radius:var(--radius);padding:24px 14px 20px;cursor:pointer;transition:all .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;align-items:center;gap:13px;position:relative;overflow:hidden;min-height:158px;justify-content:center;text-align:center;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 24px rgba(0,0,0,.4)}
-.dish-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(226,185,59,.14),transparent 70%);opacity:0;transition:opacity .3s}
-.dish-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold-3),transparent);opacity:0;transition:opacity .3s}
+.dish-card{background:linear-gradient(160deg,var(--bg-3),var(--bg-2));border:2px solid var(--border);border-radius:var(--radius);padding:22px 14px 18px;cursor:pointer;transition:border-color .2s,box-shadow .2s,background .2s;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;overflow:hidden;min-height:155px;justify-content:center;text-align:center;-webkit-tap-highlight-color:transparent;will-change:transform}
+.dish-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(200,160,32,.12),transparent 68%);opacity:0;transition:opacity .25s}
+.dish-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold-2),transparent);opacity:0;transition:opacity .25s}
 .dish-card:hover::before,.dish-card.selected::before{opacity:1}
 .dish-card.selected::after{opacity:1}
-.dish-card:active{transform:scale(.94)}
-.dish-card.selected{border-color:var(--gold-2);background:linear-gradient(160deg,rgba(139,98,8,.25),rgba(24,20,8,.95));box-shadow:0 0 0 1px rgba(226,185,59,.4),0 8px 36px rgba(226,185,59,.2)}
-.dish-emoji{font-size:48px;line-height:1;display:block;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.dish-card:hover .dish-emoji,.dish-card.selected .dish-emoji{transform:scale(1.15) translateY(-3px)}
-.dish-name{font-size:16px;font-weight:700;line-height:1.35;color:var(--text);letter-spacing:.01em}
+.dish-card.popping{animation:dishPop .35s cubic-bezier(.34,1.56,.64,1)}
+.dish-card.selected{border-color:var(--gold-2);background:linear-gradient(160deg,rgba(107,80,8,.3),var(--bg-2));box-shadow:0 0 0 1px rgba(200,160,32,.35),0 6px 24px rgba(200,160,32,.18)}
+.dish-emoji{font-size:46px;line-height:1;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5));transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.dish-card.selected .dish-emoji{animation:emojiFloat .4s cubic-bezier(.34,1.56,.64,1) forwards}
+.dish-name{font-size:15px;font-weight:700;line-height:1.35;color:var(--text);letter-spacing:.01em}
 .dish-card.selected .dish-name{color:var(--gold-1);font-weight:800}
-.dish-check{position:absolute;top:11px;right:11px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0;transform:scale(0) rotate(-30deg);transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 10px rgba(226,185,59,.45)}
-.dish-card.selected .dish-check{opacity:1;transform:scale(1) rotate(0deg)}
+.dish-check{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0;transform:scale(0);transition:none;box-shadow:0 2px 8px rgba(200,160,32,.4)}
+.dish-card.selected .dish-check{opacity:1;animation:checkIn .4s cubic-bezier(.34,1.56,.64,1) forwards}
 
 /* NAV BUTTONS */
 .nav-buttons{display:flex;align-items:center;gap:10px;padding:14px 18px 20px}
@@ -634,16 +644,31 @@ const DADOS_PADRAO = {
 // ═══════════════════════════════════════
 let speechQueue = [];
 let isSpeaking = false;
+let _ptVoice = null; // cached voice
+
+function _getBestVoice() {
+  if (_ptVoice) return _ptVoice;
+  const voices = window.speechSynthesis.getVoices();
+  // Priority: female PT-BR voices that sound natural
+  const preferred = ['Luciana','Francisca','Fernanda','Ana','Maria','Google português','Google Portuguese'];
+  for (const name of preferred) {
+    const v = voices.find(v => v.name.includes(name) && v.lang.startsWith('pt'));
+    if (v) { _ptVoice = v; return v; }
+  }
+  // Fallback: any pt-BR female, then any pt
+  _ptVoice = voices.find(v => v.lang === 'pt-BR') || voices.find(v => v.lang.startsWith('pt'));
+  return _ptVoice;
+}
 
 function speak(text, priority=false) {
-  if (!voiceEnabled) return;
-  if (priority) {
-    window.speechSynthesis.cancel();
-    speechQueue = [];
-    isSpeaking = false;
-  }
+  if (!voiceEnabled || !text) return;
+  // Always cancel current speech to avoid overlap
+  window.speechSynthesis.cancel();
+  speechQueue = [];
+  isSpeaking = false;
   speechQueue.push(text);
-  if (!isSpeaking) processQueue();
+  // Small delay so cancel takes effect
+  setTimeout(() => { if (!isSpeaking) processQueue(); }, 80);
 }
 
 function processQueue() {
@@ -652,14 +677,13 @@ function processQueue() {
   const text = speechQueue.shift();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'pt-BR';
-  u.rate = 0.88;
-  u.pitch = 1.0;
+  u.rate = 0.82;   // slightly slower — more elegant, like a concierge
+  u.pitch = 1.05;  // slightly warmer
   u.volume = 1.0;
-  const voices = window.speechSynthesis.getVoices();
-  const pt = voices.find(v => v.lang === 'pt-BR') || voices.find(v => v.lang.startsWith('pt'));
-  if (pt) u.voice = pt;
-  u.onend = () => processQueue();
-  u.onerror = () => processQueue();
+  const v = _getBestVoice();
+  if (v) u.voice = v;
+  u.onend = () => { isSpeaking = false; processQueue(); };
+  u.onerror = () => { isSpeaking = false; processQueue(); };
   window.speechSynthesis.speak(u);
 }
 
@@ -688,12 +712,12 @@ function updateVoiceUI() {
 }
 
 function speakLogin() {
-  speak('Bem-vindo ao Golden Cardápio. Digite seu nome e sobrenome para entrar.', true);
+  speak('Bem-vindo ao Golden Shopping Calhau. Digite seu nome para entrar.', true);
 }
 
 function speakDayIntro(day, index) {
-  if(index === 0) speak(`${day}. Escolha seu almoço com um toque.`, true);
-  else speak(day, true);
+  // Só fala o dia — sem instrução repetida
+  speak(day, true);
 }
 
 // ═══════════════════════════════════════
@@ -869,7 +893,7 @@ async function iniciar() {
           if(s.role !== 'admin') setTimeout(()=>{
             setupNotificacoes();
             verificarLembretesFirebase();
-          }, 2000);
+          }, 2500);
           return;
         }
       }
@@ -1164,15 +1188,31 @@ function goToDay(index) {
 }
 
 function selectDish(day, prato) {
-  vibrate(30);
-  if (SEL[day] === prato) {
+  vibrate([20, 10, 40]);
+  const wasSelected = SEL[day] === prato;
+  if (wasSelected) {
     delete SEL[day];
-    speak('Prato removido.', true);
+    // No speak on deselect — silent
   } else {
     SEL[day] = prato;
     speak(prato, true);
   }
   renderCurrentDay();
+  // Add pop animation to clicked card
+  requestAnimationFrame(() => {
+    const grid = document.getElementById('dishGrid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.dish-card');
+    const info = DB?.cardapio?.[day];
+    if (!info) return;
+    const idx = info.pratos.indexOf(prato);
+    if (idx >= 0 && cards[idx]) {
+      cards[idx].classList.remove('popping');
+      void cards[idx].offsetWidth; // reflow
+      cards[idx].classList.add('popping');
+      setTimeout(() => cards[idx]?.classList.remove('popping'), 400);
+    }
+  });
 }
 
 // ═══════════════════════════════════════
@@ -2079,14 +2119,59 @@ async function ativarNotificacoes() {
   if (perm === 'granted') {
     toast('🔔 Notificações ativadas!', 'ok');
     mostrarNotifLocal(
-      '✦ Golden Cardápio Ativado',
-      `Olá ${CU?.nome||''}! Vou te lembrar de fazer o pedido toda semana. 🍽️`
+      '✦ Golden Shopping Calhau',
+      `Olá ${CU?.nome?.split(' ')[0]||''}! Vou te lembrar do cardápio toda semana. 🍽️`
     );
     await registrarTokenFCM();
     agendarVerificacaoSemanal();
+    // Pergunta sobre voz logo depois
+    setTimeout(()=>perguntarVoz(), 1500);
   } else {
-    toast('Notificações bloqueadas. Ative nas configurações do celular.', 'err');
+    toast('Notificações bloqueadas. Ative nas configurações.', 'err');
   }
+}
+
+function perguntarVoz() {
+  if (voiceEnabled) return; // já está ativa
+  document.getElementById('vozBanner')?.remove();
+  const b = document.createElement('div');
+  b.id = 'vozBanner';
+  const nome = CU?.nome?.split(' ')[0] || '';
+  b.innerHTML = `
+    <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+      width:min(380px,92vw);background:var(--bg-1);border:1px solid var(--border-2);
+      border-radius:18px;padding:18px 20px;z-index:8000;
+      box-shadow:0 8px 28px rgba(0,0,0,.6);animation:pgIn .4s ease;font-family:var(--font)">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <span style="font-size:32px;line-height:1">🔊</span>
+        <div style="flex:1">
+          <div style="font-size:16px;font-weight:800;color:var(--gold-1);margin-bottom:4px">Assistente de voz</div>
+          <div style="font-size:13px;color:var(--muted);font-weight:500;line-height:1.5">
+            ${nome}, quer ativar a voz inteligente? Ela vai te guiar pelo cardápio com áudio.
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button onclick="ativarVozBanner()" style="flex:1;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));
+              border:none;border-radius:10px;color:var(--bg-0);font-size:14px;font-weight:800;padding:12px;cursor:pointer;font-family:var(--font)">
+              🔊 Ativar voz</button>
+            <button onclick="document.getElementById('vozBanner').remove()" style="flex:1;background:var(--bg-3);
+              border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;padding:12px;cursor:pointer;font-family:var(--font)">
+              Não obrigado</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(b);
+  setTimeout(()=>b.remove(), 12000);
+}
+
+function ativarVozBanner() {
+  document.getElementById('vozBanner')?.remove();
+  voiceEnabled = true;
+  localStorage.setItem('gc_voice', 'true');
+  updateVoiceUI();
+  const nome = CU?.nome?.split(' ')[0] || '';
+  speak(`Olá ${nome}! Voz ativada. Estou aqui para te ajudar no cardápio do Golden Shopping Calhau.`, true);
+  toast('🔊 Voz ativada!', 'ok');
 }
 
 async function registrarTokenFCM() {
@@ -2242,10 +2327,10 @@ function tentarIniciar(n){
   else document.getElementById('gcMsg').textContent='Erro ao carregar. Recarregue a página.';
 }
 
-// Load voices (some browsers need this)
+// Load voices — reset cache when voices change
 if(window.speechSynthesis){
   window.speechSynthesis.getVoices();
-  window.speechSynthesis.addEventListener('voiceschanged',()=>{window.speechSynthesis.getVoices();});
+  window.speechSynthesis.addEventListener('voiceschanged',()=>{ _ptVoice=null; window.speechSynthesis.getVoices(); });
 }
 
 updateVoiceUI();
