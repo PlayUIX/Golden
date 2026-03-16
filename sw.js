@@ -57,7 +57,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = e.request.url;
-  if (url.includes('firebaseio.com') || url.includes('googleapis') || url.includes('gstatic')) return;
+  if (url.includes('firebaseio.com') || url.includes('googleapis') || url.includes('gstatic') || url.includes('fonts.')) return;
   e.respondWith(
     caches.match(e.request).then(cached => {
       const net = fetch(e.request).then(res => {
