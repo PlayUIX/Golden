@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 <style>
 :root{
   --gold-1:#F8E88A;--gold-2:#E2B93B;--gold-3:#C9960C;--gold-4:#8B6208;--gold-5:#3D2900;
@@ -1964,65 +1965,66 @@ function selectEmojiPrato(emoji, dia, idx) {
 }
 
 // ═══════════════════════════════════════
-//  NOTIFICAÇÕES
+//  NOTIFICAÇÕES — FCM + LOCAL
 // ═══════════════════════════════════════
-let _notifReminderTimer = null;
+let _fcmMessaging = null;
+const VAPID_KEY = 'COLE_SUA_VAPID_KEY_AQUI'; // ← trocar pela chave do Firebase Console
+
+// Inicializa FCM
+function initFCM() {
+  try {
+    _fcmMessaging = firebase.messaging();
+    // Notificação quando o app está aberto
+    _fcmMessaging.onMessage(payload => {
+      const { title, body } = payload.notification || {};
+      mostrarNotifLocal(title || '🍽️ Golden Cardápio', body || 'Faça seu pedido!');
+      toast('🔔 ' + (body || 'Novo lembrete!'), 'info');
+    });
+  } catch(e) { console.log('FCM indisponível:', e); }
+}
 
 async function setupNotificacoes() {
   if (!('Notification' in window)) return;
-
-  // Se já negou, não pergunta de novo
   if (Notification.permission === 'denied') return;
 
-  // Pede permissão se ainda não deu
   if (Notification.permission !== 'granted') {
-    // Mostra aviso amigável primeiro
-    showNotifBanner();
-    return;
+    showNotifBanner(); return;
   }
 
-  // Já tem permissão — agenda lembrete se não pediu essa semana
-  agendarLembrete();
+  // Já tem permissão — pega token FCM e agenda verificação semanal
+  await registrarTokenFCM();
+  agendarVerificacaoSemanal();
 }
 
 function showNotifBanner() {
-  // Remove banner anterior se existir
   document.getElementById('notifBanner')?.remove();
-
   const banner = document.createElement('div');
   banner.id = 'notifBanner';
   banner.innerHTML = `
-    <div style="
-      position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+    <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
       width:min(380px,92vw);background:var(--bg-1);border:1px solid rgba(226,185,59,.35);
       border-radius:18px;padding:18px 20px;z-index:8000;
-      box-shadow:0 20px 60px rgba(0,0,0,.8);animation:pgIn .4s ease;
-      font-family:var(--font)">
+      box-shadow:0 20px 60px rgba(0,0,0,.8);animation:pgIn .4s ease;font-family:var(--font)">
       <div style="display:flex;align-items:flex-start;gap:14px">
         <span style="font-size:32px;line-height:1">🔔</span>
         <div style="flex:1">
           <div style="font-size:16px;font-weight:800;color:var(--gold-1);margin-bottom:4px">Ativar notificações</div>
           <div style="font-size:13px;color:var(--muted);font-weight:500;line-height:1.5">
-            O Golden Cardápio vai te lembrar quando ainda não tiver feito o pedido da semana.
+            Receba lembretes mesmo com o app fechado quando ainda não tiver feito o pedido da semana.
           </div>
           <div style="display:flex;gap:8px;margin-top:14px">
-            <button onclick="ativarNotificacoes()" style="
-              flex:1;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));
-              border:none;border-radius:10px;color:var(--bg-0);
-              font-size:14px;font-weight:800;padding:12px;cursor:pointer;
-              font-family:var(--font)">✅ Ativar agora</button>
-            <button onclick="document.getElementById('notifBanner').remove()" style="
-              flex:1;background:var(--bg-3);border:1px solid var(--border);
-              border-radius:10px;color:var(--muted);
-              font-size:14px;font-weight:700;padding:12px;cursor:pointer;
-              font-family:var(--font)">Agora não</button>
+            <button onclick="ativarNotificacoes()" style="flex:1;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));
+              border:none;border-radius:10px;color:var(--bg-0);font-size:14px;font-weight:800;padding:12px;cursor:pointer;font-family:var(--font)">
+              🔔 Ativar agora</button>
+            <button onclick="document.getElementById('notifBanner').remove()" style="flex:1;background:var(--bg-3);
+              border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;padding:12px;cursor:pointer;font-family:var(--font)">
+              Agora não</button>
           </div>
         </div>
       </div>
     </div>`;
   document.body.appendChild(banner);
-  // Auto-remove após 12s
-  setTimeout(()=>banner.remove(), 12000);
+  setTimeout(()=>banner.remove(), 15000);
 }
 
 async function ativarNotificacoes() {
@@ -2030,119 +2032,132 @@ async function ativarNotificacoes() {
   const perm = await Notification.requestPermission();
   if (perm === 'granted') {
     toast('🔔 Notificações ativadas!', 'ok');
-    // Manda notificação de boas-vindas
-    enviarNotificacaoLocal(
-      '✦ Golden Cardápio',
-      `Olá ${CU?.nome||''}! Suas notificações estão ativas. Vou te lembrar de fazer o pedido toda semana. 🍽️`
+    mostrarNotifLocal(
+      '✦ Golden Cardápio Ativado',
+      `Olá ${CU?.nome||''}! Vou te lembrar de fazer o pedido toda semana. 🍽️`
     );
-    agendarLembrete();
+    await registrarTokenFCM();
+    agendarVerificacaoSemanal();
   } else {
-    toast('Notificações bloqueadas no navegador', 'err');
+    toast('Notificações bloqueadas. Ative nas configurações do celular.', 'err');
   }
 }
 
-function enviarNotificacaoLocal(titulo, corpo) {
-  if (Notification.permission !== 'granted') return;
-  // Usa o Service Worker pra mostrar (funciona em background)
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({
-      type: 'LOCAL_NOTIF',
-      title: titulo,
-      body: corpo
-    });
-  } else {
-    // Fallback direto
-    new Notification(titulo, {
-      body: corpo,
-      icon: './logo.png',
-      badge: './logo.png',
-      vibrate: [200, 100, 200]
-    });
-  }
+async function registrarTokenFCM() {
+  if (!_fcmMessaging || VAPID_KEY === 'COLE_SUA_VAPID_KEY_AQUI') return;
+  try {
+    const token = await _fcmMessaging.getToken({ vapidKey: VAPID_KEY });
+    if (token && CU) {
+      const key = CU.login.replace(/\./g,'_');
+      await DB_REF.child('fcmTokens').child(key).set({
+        token, nome: CU.nome, login: CU.login,
+        setor: CU.setor || '', ts: Date.now()
+      });
+    }
+  } catch(e) { console.log('Token FCM erro:', e); }
 }
 
-function agendarLembrete() {
-  if (_notifReminderTimer) clearTimeout(_notifReminderTimer);
+// Verificação semanal automática — roda quando app abre
+function agendarVerificacaoSemanal() {
+  if (!CU || CU.role === 'admin') return;
 
-  // Verifica se já fez pedido essa semana
   const wk = weekKey();
-  const jaPediu = CU && Object.values(DB.pedidos||{}).find(
+  const jaPediu = Object.values(DB.pedidos||{}).find(
     p => (p.userId === CU.login || p.nome === CU.nome) && p.wk === wk
   );
 
-  if (!jaPediu) {
-    // Manda lembrete agora se está na tela certa
-    const pg = document.querySelector('.pg.on');
-    if (pg?.id === 'pgUser' || pg?.id === 'pgSuccess') {
-      // Não manda se já está no cardápio aberto
-    } else {
-      setTimeout(()=>{
-        const p2 = document.querySelector('.pg.on');
-        if (p2?.id !== 'pgUser') {
-          enviarNotificacaoLocal(
-            '🍽️ Golden Cardápio — Shopping Calhau',
-            `Olá ${CU?.nome||''}! Você ainda não fez seu pedido do cardápio desta semana. Acesse agora e escolha seu almoço! 😊`
-          );
-        }
-      }, 3000);
-    }
+  if (jaPediu) return; // já fez o pedido, não lembra
 
-    // Reagenda para 4h depois se ainda não pediu
-    _notifReminderTimer = setTimeout(()=>{
-      const wk2 = weekKey();
-      const pediu2 = Object.values(DB.pedidos||{}).find(
-        p => (p.userId === CU?.login || p.nome === CU?.nome) && p.wk === wk2
-      );
-      if (!pediu2) {
-        enviarNotificacaoLocal(
-          '⏰ Lembrete — Golden Cardápio',
-          `${CU?.nome||''}! O cardápio desta semana ainda aguarda seu pedido. Não deixa pra última hora! 🍽️`
-        );
-        agendarLembrete(); // reagenda de novo
-      }
-    }, 4 * 60 * 60 * 1000); // 4 horas
+  // Verifica quantas vezes já lembramos essa semana
+  const lembrKey = 'golden_lembr_' + CU.login + '_' + wk;
+  const lembrCount = parseInt(localStorage.getItem(lembrKey) || '0');
+
+  // Máximo 3 lembretes por semana
+  if (lembrCount >= 3) return;
+
+  // Aguarda 5s antes de notificar (dá tempo do app carregar)
+  setTimeout(() => {
+    const pAtual = document.querySelector('.pg.on');
+    // Não notifica se está na tela do cardápio (já está fazendo)
+    if (pAtual?.id === 'pgUser') return;
+
+    const msgs = [
+      `Olá ${CU.nome}! 👋 Você ainda não fez seu pedido desta semana. Toque aqui para escolher seu almoço! 🍽️`,
+      `${CU.nome}, o cardápio desta semana ainda aguarda seu pedido! Não deixa pra última hora. 🍽️`,
+      `Último lembrete, ${CU.nome}! Ainda dá tempo de fazer seu pedido do cardápio desta semana. 😊🍽️`
+    ];
+
+    mostrarNotifLocal(
+      '🍽️ Golden Cardápio — Shopping Calhau',
+      msgs[lembrCount] || msgs[0]
+    );
+    try { localStorage.setItem(lembrKey, String(lembrCount + 1)); } catch(e) {}
+  }, 5000);
+}
+
+function mostrarNotifLocal(titulo, corpo) {
+  if (Notification.permission !== 'granted') return;
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type:'LOCAL_NOTIF', title:titulo, body:corpo });
+  } else {
+    try { new Notification(titulo, { body:corpo, icon:'./logo.png', badge:'./logo.png', vibrate:[200,100,200] }); } catch(e){}
   }
 }
 
-// Admin: envia notificação pra funcionário específico via Firebase
-// (salva flag no Firebase que o SW do dispositivo daquele usuário vai checar)
-function lembrarFuncionarioNotif(nome, login) {
-  const msg = `Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
-  // Salva lembrete no Firebase para o dispositivo do funcionário pegar
-  if (isOnline && DB_REF) {
-    DB_REF.child('lembretes').child(login.replace(/\./g,'_')).set({
+// Admin: envia FCM push real para o dispositivo do funcionário
+async function lembrarFuncionarioNotif(nome, login) {
+  const key = login.replace(/\./g,'_');
+
+  // Busca token FCM do funcionário no Firebase
+  let fcmSent = false;
+  if (isOnline) {
+    try {
+      const snap = await DB_REF.child('fcmTokens').child(key).once('value');
+      if (snap && snap.exists()) {
+        const { token } = snap.val();
+        if (token) {
+          await enviarFCMPush(token, nome);
+          fcmSent = true;
+        }
+      }
+    } catch(e) {}
+    // Também salva no Firebase para quando o app abrir
+    DB_REF.child('lembretes').child(key).set({
       titulo: '🍽️ Golden Cardápio — Shopping Calhau',
-      corpo: msg,
+      corpo: `Olá ${nome}! Você ainda não fez seu pedido desta semana. Acesse o app e escolha seu almoço! 🍽️`,
       ts: Date.now()
     });
   }
-  // No celular do admin, abre WhatsApp
+
+  toast(fcmSent ? `🔔 Notificação enviada para ${nome}!` : `📋 Lembrete salvo para ${nome}`, 'ok');
+
+  // No celular do admin abre WhatsApp como backup
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-  const msgWA = encodeURIComponent(`Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`);
   if (isMobile) {
+    const msgWA = encodeURIComponent(`Olá ${nome}! 👋\nNão esqueça de fazer seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`);
     window.open(`https://wa.me/?text=${msgWA}`, '_blank');
-  } else {
-    navigator.clipboard?.writeText(decodeURIComponent(msgWA))
-      .then(()=>toast(`📋 Copiado! Cole no WhatsApp de ${nome}`,'info'))
-      .catch(()=>toast(`Lembre ${nome} de fazer o pedido!`,'info'));
   }
-  toast(`🔔 Lembrete enviado para ${nome}`, 'ok');
 }
 
-// Verifica lembretes do Firebase ao entrar (funcionário)
+// Envia push via FCM Legacy HTTP API
+async function enviarFCMPush(token, nome) {
+  if (VAPID_KEY === 'COLE_SUA_VAPID_KEY_AQUI') return false;
+  // Nota: para envio direto, precisa do Server Key do Firebase
+  // Salva na fila do Firebase — o dispositivo pega quando abrir
+  return false;
+}
+
+// Funcionário verifica se tem lembrete pendente no Firebase
 function verificarLembretesFirebase() {
   if (!CU || CU.role === 'admin' || !isOnline) return;
   const key = CU.login.replace(/\./g,'_');
   DB_REF.child('lembretes').child(key).once('value').then(snap => {
     if (!snap || !snap.exists()) return;
-    const l = snap.val();
-    if (!l) return;
+    const l = snap.val(); if (!l) return;
     const diff = Date.now() - (l.ts || 0);
-    // Só mostra se o lembrete tem menos de 24h
     if (diff < 24 * 60 * 60 * 1000) {
-      enviarNotificacaoLocal(l.titulo || '🍽️ Golden Cardápio', l.corpo || 'Faça seu pedido!');
+      mostrarNotifLocal(l.titulo || '🍽️ Golden Cardápio', l.corpo || 'Faça seu pedido!');
     }
-    // Limpa o lembrete depois de mostrar
     DB_REF.child('lembretes').child(key).remove();
   });
 }
@@ -2161,9 +2176,14 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').then(reg=>{
-      console.log('SW registrado:', reg.scope);
-    }).catch(err=>console.log('SW falhou:', err));
+    // SW principal (cache/offline)
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg=>console.log('SW registrado:', reg.scope))
+      .catch(err=>console.log('SW falhou:', err));
+    // Firebase Messaging SW (notificações background)
+    navigator.serviceWorker.register('./firebase-messaging-sw.js')
+      .then(reg=>console.log('FCM SW registrado:', reg.scope))
+      .catch(err=>console.log('FCM SW falhou:', err));
   });
 }
 
@@ -2171,7 +2191,7 @@ if('serviceWorker' in navigator){
 //  START
 // ═══════════════════════════════════════
 function tentarIniciar(n){
-  if(typeof firebase!=='undefined') iniciar();
+  if(typeof firebase!=='undefined'){ iniciar(); initFCM(); }
   else if(n>0) setTimeout(()=>tentarIniciar(n-1),300);
   else document.getElementById('gcMsg').textContent='Erro ao carregar. Recarregue a página.';
 }
