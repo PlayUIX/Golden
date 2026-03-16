@@ -586,6 +586,7 @@ let currentDayIndex = 0, voiceEnabled = localStorage.getItem('gc_voice') !== 'fa
 let pedFilt = 'semana';
 
 const CACHE_KEY = 'golden_db_v3';
+const SESSION_KEY = 'golden_session_v1'; // salva login do dispositivo
 const DIAS_ORDER = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado','Domingo'];
 
 const DADOS_PADRAO = {
@@ -826,6 +827,24 @@ async function iniciar() {
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
       DB = JSON.parse(cached); normalizeDB(DB);
+      // Tenta auto-login com sessão salva
+      const session = localStorage.getItem(SESSION_KEY);
+      if (session) {
+        const s = JSON.parse(session);
+        const u = s.role === 'admin'
+          ? (DB.users?.goldenadmin || DADOS_PADRAO.users.goldenadmin)
+          : Object.values(DB.users||{}).find(x => x.login === s.login);
+        if (u) {
+          CU = u;
+          hideLoading();
+          updateVoiceUI();
+          if(s.role==='admin'){showPage('pgAdmin');renderAdmin();}
+          else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
+          syncBackground();
+          startRealtimeListener();
+          return;
+        }
+      }
       hideLoading(); showPage('pgLogin'); updateVoiceUI();
       setTimeout(()=>speakLogin(), 800);
       syncBackground(); return;
@@ -907,6 +926,10 @@ function _entrar(role) {
   document.getElementById('inUser').value='';
   vibrate([20,10,30]);
   stopVoice();
+  // Salva sessão no dispositivo
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({login: CU.login, role}));
+  } catch(e){}
   if(role==='admin'){showPage('pgAdmin');renderAdmin();}
   else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
   syncBackground();
@@ -915,7 +938,8 @@ function _entrar(role) {
 
 function doLogout() {
   CU=null; SEL={};
-  DB_REF.off(); // para o listener em tempo real
+  try { localStorage.removeItem(SESSION_KEY); } catch(e){} // apaga sessão
+  DB_REF.off();
   stopVoice(); closeDrawer();
   showPage('pgLogin'); updateVoiceUI();
   setTimeout(()=>speakLogin(),600);
@@ -1419,15 +1443,22 @@ function copiarPedido(userId, wk){
 }
 
 function lembrarFuncionario(nome){
-  const msg=`Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
-  navigator.clipboard?.writeText(msg)
-    .then(()=>toast(`📋 Mensagem copiada! Envie para ${nome} no WhatsApp`,'info'))
-    .catch(()=>{
-      const ta=document.createElement('textarea');ta.value=msg;
-      document.body.appendChild(ta);ta.select();document.execCommand('copy');
-      document.body.removeChild(ta);
-      toast(`📋 Mensagem copiada! Envie para ${nome}`,'info');
-    });
+  const msg=`Olá ${nome}! 👋%0ANão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
+  const msgPlain=`Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
+  // Abre WhatsApp direto no celular
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if(isMobile){
+    window.open(`https://wa.me/?text=${msg}`, '_blank');
+  } else {
+    navigator.clipboard?.writeText(msgPlain)
+      .then(()=>toast(`📋 Mensagem copiada! Cole no WhatsApp de ${nome}`,'info'))
+      .catch(()=>{
+        const ta=document.createElement('textarea');ta.value=msgPlain;
+        document.body.appendChild(ta);ta.select();document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast(`📋 Mensagem copiada! Cole no WhatsApp de ${nome}`,'info');
+      });
+  }
 }
 
 function limparSemana(){
