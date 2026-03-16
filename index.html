@@ -842,6 +842,10 @@ async function iniciar() {
           else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
           syncBackground();
           startRealtimeListener();
+          if(s.role !== 'admin') setTimeout(()=>{
+            setupNotificacoes();
+            verificarLembretesFirebase();
+          }, 2000);
           return;
         }
       }
@@ -934,6 +938,11 @@ function _entrar(role) {
   else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
   syncBackground();
   startRealtimeListener();
+  // Pede permissão e agenda lembrete
+  if(role !== 'admin') setTimeout(()=>{
+    setupNotificacoes();
+    verificarLembretesFirebase();
+  }, 1500);
 }
 
 function doLogout() {
@@ -1406,7 +1415,7 @@ function renderPedidos() {
           <div class="pendente-nome">${u.nome||u.login}</div>
           <div class="pendente-setor">${s.nome}</div>
         </div>
-        <button class="lembrar-btn" onclick="lembrarFuncionario('${(u.nome||u.login).replace(/'/g,"\\'")}')">🔔 Lembrar</button>
+        <button class="lembrar-btn" onclick="lembrarFuncionarioNotif('${(u.nome||u.login).replace(/'/g,"\\'")}','${u.login.replace(/'/g,"\\'")}')">🔔 Lembrar</button>
       </div>`;
     });
     html+=`</div>`;
@@ -1952,6 +1961,190 @@ function selectEmojiPrato(emoji, dia, idx) {
   if(badge) badge.classList.toggle('show', !emoji);
   vibrate(20); epickerClose();
   toast(emoji ? '✅ Emoji definido!' : '🔄 Voltou ao automático');
+}
+
+// ═══════════════════════════════════════
+//  NOTIFICAÇÕES
+// ═══════════════════════════════════════
+let _notifReminderTimer = null;
+
+async function setupNotificacoes() {
+  if (!('Notification' in window)) return;
+
+  // Se já negou, não pergunta de novo
+  if (Notification.permission === 'denied') return;
+
+  // Pede permissão se ainda não deu
+  if (Notification.permission !== 'granted') {
+    // Mostra aviso amigável primeiro
+    showNotifBanner();
+    return;
+  }
+
+  // Já tem permissão — agenda lembrete se não pediu essa semana
+  agendarLembrete();
+}
+
+function showNotifBanner() {
+  // Remove banner anterior se existir
+  document.getElementById('notifBanner')?.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'notifBanner';
+  banner.innerHTML = `
+    <div style="
+      position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+      width:min(380px,92vw);background:var(--bg-1);border:1px solid rgba(226,185,59,.35);
+      border-radius:18px;padding:18px 20px;z-index:8000;
+      box-shadow:0 20px 60px rgba(0,0,0,.8);animation:pgIn .4s ease;
+      font-family:var(--font)">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <span style="font-size:32px;line-height:1">🔔</span>
+        <div style="flex:1">
+          <div style="font-size:16px;font-weight:800;color:var(--gold-1);margin-bottom:4px">Ativar notificações</div>
+          <div style="font-size:13px;color:var(--muted);font-weight:500;line-height:1.5">
+            O Golden Cardápio vai te lembrar quando ainda não tiver feito o pedido da semana.
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button onclick="ativarNotificacoes()" style="
+              flex:1;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));
+              border:none;border-radius:10px;color:var(--bg-0);
+              font-size:14px;font-weight:800;padding:12px;cursor:pointer;
+              font-family:var(--font)">✅ Ativar agora</button>
+            <button onclick="document.getElementById('notifBanner').remove()" style="
+              flex:1;background:var(--bg-3);border:1px solid var(--border);
+              border-radius:10px;color:var(--muted);
+              font-size:14px;font-weight:700;padding:12px;cursor:pointer;
+              font-family:var(--font)">Agora não</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(banner);
+  // Auto-remove após 12s
+  setTimeout(()=>banner.remove(), 12000);
+}
+
+async function ativarNotificacoes() {
+  document.getElementById('notifBanner')?.remove();
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    toast('🔔 Notificações ativadas!', 'ok');
+    // Manda notificação de boas-vindas
+    enviarNotificacaoLocal(
+      '✦ Golden Cardápio',
+      `Olá ${CU?.nome||''}! Suas notificações estão ativas. Vou te lembrar de fazer o pedido toda semana. 🍽️`
+    );
+    agendarLembrete();
+  } else {
+    toast('Notificações bloqueadas no navegador', 'err');
+  }
+}
+
+function enviarNotificacaoLocal(titulo, corpo) {
+  if (Notification.permission !== 'granted') return;
+  // Usa o Service Worker pra mostrar (funciona em background)
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'LOCAL_NOTIF',
+      title: titulo,
+      body: corpo
+    });
+  } else {
+    // Fallback direto
+    new Notification(titulo, {
+      body: corpo,
+      icon: './logo.png',
+      badge: './logo.png',
+      vibrate: [200, 100, 200]
+    });
+  }
+}
+
+function agendarLembrete() {
+  if (_notifReminderTimer) clearTimeout(_notifReminderTimer);
+
+  // Verifica se já fez pedido essa semana
+  const wk = weekKey();
+  const jaPediu = CU && Object.values(DB.pedidos||{}).find(
+    p => (p.userId === CU.login || p.nome === CU.nome) && p.wk === wk
+  );
+
+  if (!jaPediu) {
+    // Manda lembrete agora se está na tela certa
+    const pg = document.querySelector('.pg.on');
+    if (pg?.id === 'pgUser' || pg?.id === 'pgSuccess') {
+      // Não manda se já está no cardápio aberto
+    } else {
+      setTimeout(()=>{
+        const p2 = document.querySelector('.pg.on');
+        if (p2?.id !== 'pgUser') {
+          enviarNotificacaoLocal(
+            '🍽️ Golden Cardápio — Shopping Calhau',
+            `Olá ${CU?.nome||''}! Você ainda não fez seu pedido do cardápio desta semana. Acesse agora e escolha seu almoço! 😊`
+          );
+        }
+      }, 3000);
+    }
+
+    // Reagenda para 4h depois se ainda não pediu
+    _notifReminderTimer = setTimeout(()=>{
+      const wk2 = weekKey();
+      const pediu2 = Object.values(DB.pedidos||{}).find(
+        p => (p.userId === CU?.login || p.nome === CU?.nome) && p.wk === wk2
+      );
+      if (!pediu2) {
+        enviarNotificacaoLocal(
+          '⏰ Lembrete — Golden Cardápio',
+          `${CU?.nome||''}! O cardápio desta semana ainda aguarda seu pedido. Não deixa pra última hora! 🍽️`
+        );
+        agendarLembrete(); // reagenda de novo
+      }
+    }, 4 * 60 * 60 * 1000); // 4 horas
+  }
+}
+
+// Admin: envia notificação pra funcionário específico via Firebase
+// (salva flag no Firebase que o SW do dispositivo daquele usuário vai checar)
+function lembrarFuncionarioNotif(nome, login) {
+  const msg = `Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
+  // Salva lembrete no Firebase para o dispositivo do funcionário pegar
+  if (isOnline && DB_REF) {
+    DB_REF.child('lembretes').child(login.replace(/\./g,'_')).set({
+      titulo: '🍽️ Golden Cardápio — Shopping Calhau',
+      corpo: msg,
+      ts: Date.now()
+    });
+  }
+  // No celular do admin, abre WhatsApp
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  const msgWA = encodeURIComponent(`Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`);
+  if (isMobile) {
+    window.open(`https://wa.me/?text=${msgWA}`, '_blank');
+  } else {
+    navigator.clipboard?.writeText(decodeURIComponent(msgWA))
+      .then(()=>toast(`📋 Copiado! Cole no WhatsApp de ${nome}`,'info'))
+      .catch(()=>toast(`Lembre ${nome} de fazer o pedido!`,'info'));
+  }
+  toast(`🔔 Lembrete enviado para ${nome}`, 'ok');
+}
+
+// Verifica lembretes do Firebase ao entrar (funcionário)
+function verificarLembretesFirebase() {
+  if (!CU || CU.role === 'admin' || !isOnline) return;
+  const key = CU.login.replace(/\./g,'_');
+  DB_REF.child('lembretes').child(key).once('value').then(snap => {
+    if (!snap || !snap.exists()) return;
+    const l = snap.val();
+    if (!l) return;
+    const diff = Date.now() - (l.ts || 0);
+    // Só mostra se o lembrete tem menos de 24h
+    if (diff < 24 * 60 * 60 * 1000) {
+      enviarNotificacaoLocal(l.titulo || '🍽️ Golden Cardápio', l.corpo || 'Faça seu pedido!');
+    }
+    // Limpa o lembrete depois de mostrar
+    DB_REF.child('lembretes').child(key).remove();
+  });
 }
 
 // ═══════════════════════════════════════
