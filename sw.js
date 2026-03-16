@@ -1,17 +1,18 @@
-const CACHE_NAME = 'golden-cardapio-v3';
+const CACHE_NAME = 'golden-cardapio-v4';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './logo.png',
-  'https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;600;700;900&display=swap'
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS.map(url => {
-      return fetch(url).then(r => cache.put(url, r)).catch(() => {});
-    }))).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(ASSETS.map(url =>
+        fetch(url).then(r => cache.put(url, r)).catch(() => {})
+      ))
+    ).then(() => self.skipWaiting())
   );
 });
 
@@ -38,3 +39,49 @@ self.addEventListener('fetch', e => {
     })
   );
 });
+
+// Recebe notificações push do admin
+self.addEventListener('push', e => {
+  const data = e.data ? e.data.json() : {};
+  e.waitUntil(
+    self.registration.showNotification(data.title || '🍽️ Golden Cardápio', {
+      body: data.body || 'Não esqueça de fazer seu pedido!',
+      icon: './logo.png',
+      badge: './logo.png',
+      vibrate: [200, 100, 200],
+      tag: 'golden-lembrete',
+      renotify: true,
+      data: { url: './' }
+    })
+  );
+});
+
+// Clique na notificação abre o app
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({type:'window'}).then(list => {
+      for (const c of list) {
+        if (c.url.includes('index') || c.url.endsWith('/')) {
+          return c.focus();
+        }
+      }
+      return clients.openWindow('./');
+    })
+  );
+});
+
+// Mensagem do app → mostra notificação local
+self.addEventListener('message', e => {
+  if (e.data?.type === 'LOCAL_NOTIF') {
+    self.registration.showNotification(e.data.title || '🍽️ Golden Cardápio', {
+      body: e.data.body || 'Faça seu pedido da semana!',
+      icon: './logo.png',
+      badge: './logo.png',
+      vibrate: [200, 100, 200, 100, 300],
+      tag: 'golden-lembrete',
+      renotify: true
+    });
+  }
+});
+
