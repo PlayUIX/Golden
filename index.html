@@ -617,6 +617,18 @@ const DB_REF = firebase.database().ref();
 // ═══════════════════════════════════════
 let DB = null, CU = null, SEL = {}, isOnline = navigator.onLine;
 let currentDayIndex = 0, voiceEnabled = localStorage.getItem('gc_voice') !== 'false';
+let _voiceUnlocked = false; // mobile browsers block speech until first tap
+
+function unlockVoice() {
+  if (_voiceUnlocked) return;
+  _voiceUnlocked = true;
+  // Unlock speechSynthesis with a silent utterance on first user tap
+  const u = new SpeechSynthesisUtterance('');
+  u.volume = 0;
+  window.speechSynthesis?.speak(u);
+}
+document.addEventListener('touchstart', unlockVoice, { once: true, passive: true });
+document.addEventListener('click',      unlockVoice, { once: true });
 let pedFilt = 'semana';
 
 const CACHE_KEY = 'golden_db_v3';
@@ -673,16 +685,17 @@ function speak(text, priority=false) {
 
 function processQueue() {
   if (!speechQueue.length) { isSpeaking = false; return; }
+  if (!_voiceUnlocked) { isSpeaking = false; return; } // wait for user interaction on mobile
   isSpeaking = true;
   const text = speechQueue.shift();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'pt-BR';
-  u.rate = 0.82;   // slightly slower — more elegant, like a concierge
-  u.pitch = 1.05;  // slightly warmer
+  u.rate = 0.84;
+  u.pitch = 1.05;
   u.volume = 1.0;
   const v = _getBestVoice();
   if (v) u.voice = v;
-  u.onend = () => { isSpeaking = false; processQueue(); };
+  u.onend  = () => { isSpeaking = false; processQueue(); };
   u.onerror = () => { isSpeaking = false; processQueue(); };
   window.speechSynthesis.speak(u);
 }
@@ -871,34 +884,68 @@ function startRealtimeListener() {
 
 async function iniciar() {
   setLoadMsg('Carregando...');
+
+  // ── Tenta restaurar sessão ──
+  // Prioridade: localStorage (rápido) → SW IndexedDB (mais confiável no mobile)
+  async function tryRestoreSession() {
+    // 1. localStorage
+    let s = null;
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (raw) s = JSON.parse(raw);
+    } catch(e){}
+
+    // 2. SW IndexedDB (se localStorage vazio)
+    if (!s) {
+      s = await new Promise(resolve => {
+        const timeout = setTimeout(() => resolve(null), 1200);
+        swMessage({ type: 'GET_SESSION' });
+        const handler = e => {
+          if (e.data?.type === 'SESSION_DATA' && e.data.session) {
+            clearTimeout(timeout);
+            navigator.serviceWorker.removeEventListener('message', handler);
+            resolve(e.data.session);
+          }
+        };
+        if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', handler);
+        else resolve(null);
+      });
+    }
+    return s;
+  }
+
   try {
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
       DB = JSON.parse(cached); normalizeDB(DB);
-      // Tenta auto-login com sessão salva
-      const session = localStorage.getItem(SESSION_KEY);
-      if (session) {
-        const s = JSON.parse(session);
-        const u = s.role === 'admin'
-          ? (DB.users?.goldenadmin || DADOS_PADRAO.users.goldenadmin)
-          : Object.values(DB.users||{}).find(x => x.login === s.login);
-        if (u) {
-          CU = u;
-          hideLoading();
-          updateVoiceUI();
-          if(s.role==='admin'){showPage('pgAdmin');renderAdmin();}
-          else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
-          syncBackground();
-          startRealtimeListener();
-          if(s.role !== 'admin') setTimeout(()=>{
-            setupNotificacoes();
-            verificarLembretesFirebase();
-          }, 2500);
-          return;
+      const s = await tryRestoreSession();
+      if (s) {
+        // Reconstrói CU a partir da sessão salva (não precisa buscar no DB)
+        if (s.role === 'admin') {
+          CU = DB.users?.goldenadmin || DADOS_PADRAO.users.goldenadmin;
+        } else {
+          // Usa dados da sessão, atualiza com DB se disponível
+          const fromDB = Object.values(DB.users||{}).find(x => x.login === s.login);
+          CU = fromDB || { login:s.login, nome:s.nome, cargo:s.cargo, setor:s.setor, photo:s.photo, role:s.role };
         }
+        hideLoading(); updateVoiceUI();
+        // Re-save session to ensure SW has latest
+        swMessage({ type: 'SAVE_SESSION', session: s });
+        if(s.role==='admin'){showPage('pgAdmin');renderAdmin();}
+        else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
+        syncBackground();
+        startRealtimeListener();
+        if(s.role !== 'admin') setTimeout(()=>{
+          setupNotificacoes();
+          verificarLembretesFirebase();
+        }, 2500);
+        return;
       }
       hideLoading(); showPage('pgLogin'); updateVoiceUI();
-      setTimeout(()=>speakLogin(), 800);
+      // Speak only after first user interaction (mobile fix)
+      const _speakOnce = () => { speakLogin(); document.removeEventListener('touchstart', _speakOnce); document.removeEventListener('click', _speakOnce); };
+      document.addEventListener('touchstart', _speakOnce, { once: true });
+      document.addEventListener('click', _speakOnce, { once: true });
       syncBackground(); return;
     }
   } catch(e){}
@@ -909,7 +956,7 @@ async function iniciar() {
     DB = JSON.parse(JSON.stringify(DADOS_PADRAO));
     try{localStorage.setItem(CACHE_KEY,JSON.stringify(DB));}catch(e){}
     hideLoading(); showPage('pgLogin'); updateVoiceUI();
-    setTimeout(()=>speakLogin(), 800);
+    setTimeout(()=>{ if(_voiceUnlocked) speakLogin(); else { const _f=()=>{speakLogin();document.removeEventListener('touchstart',_f);document.removeEventListener('click',_f);}; document.addEventListener('touchstart',_f,{once:true}); document.addEventListener('click',_f,{once:true}); } }, 500);
     toast('⚠️ Modo offline ativado','info');
   }, 5000);
   try {
@@ -925,7 +972,7 @@ async function iniciar() {
     toast('⚠️ Modo offline','err');
   }
   hideLoading(); showPage('pgLogin'); updateVoiceUI();
-  setTimeout(()=>speakLogin(), 800);
+  setTimeout(()=>{ if(_voiceUnlocked) speakLogin(); else { const _f=()=>{speakLogin();document.removeEventListener('touchstart',_f);document.removeEventListener('click',_f);}; document.addEventListener('touchstart',_f,{once:true}); document.addEventListener('click',_f,{once:true}); } }, 500);
 }
 
 window.addEventListener('online',  ()=>{ isOnline=true;  toast('🟢 Conexão restabelecida','ok'); syncBackground(); });
@@ -978,10 +1025,18 @@ function _entrar(role) {
   document.getElementById('inUser').value='';
   vibrate([20,10,30]);
   stopVoice();
-  // Salva sessão no dispositivo
-  try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({login: CU.login, role}));
-  } catch(e){}
+  // Salva sessão em localStorage + SW IndexedDB (persiste no celular)
+  const sessionData = {
+    login: CU.login,
+    nome: CU.nome,
+    cargo: CU.cargo,
+    setor: CU.setor || '',
+    photo: CU.photo || null,
+    role
+  };
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData)); } catch(e){}
+  // Envia para o Service Worker via IndexedDB (sobrevive ao app fechado)
+  swMessage({ type: 'SAVE_SESSION', session: sessionData });
   if(role==='admin'){showPage('pgAdmin');renderAdmin();}
   else{SEL={};currentDayIndex=0;showPage('pgUser');renderUser();}
   syncBackground();
@@ -995,7 +1050,8 @@ function _entrar(role) {
 
 function doLogout() {
   CU=null; SEL={};
-  try { localStorage.removeItem(SESSION_KEY); } catch(e){} // apaga sessão
+  try { localStorage.removeItem(SESSION_KEY); } catch(e){}
+  swMessage({ type: 'CLEAR_SESSION' });
   DB_REF.off();
   stopVoice(); closeDrawer();
   showPage('pgLogin'); updateVoiceUI();
@@ -1298,6 +1354,10 @@ function enviarCardapio() {
         <div class="suc-dish-nm">${p}</div>
       </div>`;
   });
+
+  // Cancela alarmes de lembrete no SW — pedido feito!
+  swMessage({ type: 'DID_ORDER' });
+  try { localStorage.removeItem('golden_lembr_' + CU.login + '_' + weekKey()); } catch(e){}
 
   launchConfetti();
   showPage('pgSuccess');
@@ -2188,7 +2248,7 @@ async function registrarTokenFCM() {
   } catch(e) { console.log('Token FCM erro:', e); }
 }
 
-// Verificação semanal automática — roda quando app abre
+// Verificação semanal — notifica quando app abre E agenda no SW para background
 function agendarVerificacaoSemanal() {
   if (!CU || CU.role === 'admin') return;
 
@@ -2197,33 +2257,46 @@ function agendarVerificacaoSemanal() {
     p => (p.userId === CU.login || p.nome === CU.nome) && p.wk === wk
   );
 
-  if (jaPediu) return; // já fez o pedido, não lembra
+  if (jaPediu) {
+    // Já pediu — cancela alarmes no SW
+    swMessage({ type: 'DID_ORDER' });
+    return;
+  }
 
-  // Verifica quantas vezes já lembramos essa semana
-  const lembrKey = 'golden_lembr_' + CU.login + '_' + wk;
+  const lembrKey  = 'golden_lembr_' + CU.login + '_' + wk;
   const lembrCount = parseInt(localStorage.getItem(lembrKey) || '0');
-
-  // Máximo 3 lembretes por semana
   if (lembrCount >= 3) return;
 
-  // Aguarda 5s antes de notificar (dá tempo do app carregar)
+  const msgs = [
+    [`🍽️ Golden Shopping Calhau`,    `Olá ${CU.nome?.split(' ')[0]}! Você ainda não fez seu pedido desta semana. Toque para escolher! 🍽️`],
+    [`⏰ Golden Cardápio — Lembrete`, `${CU.nome?.split(' ')[0]}, seu pedido desta semana ainda está em aberto! 🍽️`],
+    [`🔔 Último lembrete — Golden`,   `${CU.nome?.split(' ')[0]}, ainda dá tempo de fazer seu pedido desta semana! 😊🍽️`],
+  ];
+
+  // Notifica se app abre mas usuário não está no cardápio
   setTimeout(() => {
     const pAtual = document.querySelector('.pg.on');
-    // Não notifica se está na tela do cardápio (já está fazendo)
     if (pAtual?.id === 'pgUser') return;
+    const [title, body] = msgs[lembrCount] || msgs[0];
+    mostrarNotifLocal(title, body);
+    try { localStorage.setItem(lembrKey, String(lembrCount + 1)); } catch(e){}
+  }, 4000);
 
-    const msgs = [
-      `Olá ${CU.nome}! 👋 Você ainda não fez seu pedido desta semana. Toque aqui para escolher seu almoço! 🍽️`,
-      `${CU.nome}, o cardápio desta semana ainda aguarda seu pedido! Não deixa pra última hora. 🍽️`,
-      `Último lembrete, ${CU.nome}! Ainda dá tempo de fazer seu pedido do cardápio desta semana. 😊🍽️`
-    ];
+  // Agenda alarms no SW para disparar mesmo com o app fechado
+  const now = Date.now();
+  const nome = CU.nome?.split(' ')[0] || CU.nome;
+  const alarms = [];
 
-    mostrarNotifLocal(
-      '🍽️ Golden Cardápio — Shopping Calhau',
-      msgs[lembrCount] || msgs[0]
-    );
-    try { localStorage.setItem(lembrKey, String(lembrCount + 1)); } catch(e) {}
-  }, 5000);
+  // Lembrete 1: 6h depois
+  if (lembrCount < 1) alarms.push({ fireAt: now + 6*60*60*1000,  title:'🍽️ Golden Shopping Calhau', body:`${nome}, você ainda não fez seu pedido desta semana!` });
+  // Lembrete 2: 1 dia depois
+  if (lembrCount < 2) alarms.push({ fireAt: now + 24*60*60*1000, title:'⏰ Golden Cardápio',          body:`${nome}, seu pedido desta semana ainda está em aberto! 🍽️` });
+  // Lembrete 3: 2 dias depois
+  if (lembrCount < 3) alarms.push({ fireAt: now + 48*60*60*1000, title:'🔔 Último lembrete — Golden', body:`${nome}, última chance de fazer seu pedido desta semana! 😊` });
+
+  if (alarms.length) {
+    swMessage({ type: 'SAVE_SESSION', session: null, schedule: { cancelled: false, alarms } });
+  }
 }
 
 function mostrarNotifLocal(titulo, corpo) {
@@ -2303,18 +2376,28 @@ document.addEventListener('keydown',e=>{
 });
 
 // ═══════════════════════════════════════
-//  SERVICE WORKER
+//  SERVICE WORKER + HELPER
 // ═══════════════════════════════════════
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    // SW principal (cache/offline)
+function swMessage(data) {
+  if (navigator.serviceWorker?.controller) {
+    navigator.serviceWorker.controller.postMessage(data);
+  }
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg=>console.log('SW registrado:', reg.scope))
-      .catch(err=>console.log('SW falhou:', err));
-    // Firebase Messaging SW (notificações background)
+      .then(reg => { console.log('SW OK'); })
+      .catch(err => console.log('SW erro:', err));
     navigator.serviceWorker.register('./firebase-messaging-sw.js')
-      .then(reg=>console.log('FCM SW registrado:', reg.scope))
-      .catch(err=>console.log('FCM SW falhou:', err));
+      .catch(() => {}); // optional FCM sw
+  });
+
+  // Listen for messages from SW (session restore via IndexedDB)
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data?.type === 'SESSION_DATA') {
+      // Handled inside iniciar's Promise — nothing to do here globally
+    }
   });
 }
 
