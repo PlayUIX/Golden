@@ -106,7 +106,7 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
   position:absolute;top:0;bottom:0;width:1px;pointer-events:none;
   background:linear-gradient(180deg,transparent 0%,rgba(212,175,55,.18) 15%,rgba(212,175,55,.18) 85%,transparent 100%);
 }
-.splash-col-l{left:10%}.splash-col-r{right:10%}
+.splash-col-l{left:2%}.splash-col-r{right:2%}
 .splash-gem{
   position:absolute;width:7px;height:7px;transform:rotate(45deg);
   background:rgba(212,175,55,.5);
@@ -157,9 +157,11 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
   width:128px;height:128px;object-fit:contain;
   position:relative;z-index:3;
   opacity:0;
-  animation:logoIn 1s cubic-bezier(.34,1.1,.64,1) .2s forwards;
+  /* logoIn revela → logoFloat flutua para sempre, sem troca de classe */
+  animation:
+    logoIn 1s cubic-bezier(.34,1.1,.64,1) .2s forwards,
+    logoFloat 6s ease-in-out 1.4s infinite;
 }
-.splash-logo.floating{animation:logoFloat 6s ease-in-out infinite}
 
 /* textos */
 .splash-divider{
@@ -1030,10 +1032,10 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
   <!-- colunas -->
   <div class="splash-col-l"></div>
   <div class="splash-col-r"></div>
-  <div class="splash-gem" style="top:18%;left:calc(10% - 3px)"></div>
-  <div class="splash-gem" style="top:82%;left:calc(10% - 4px)"></div>
-  <div class="splash-gem" style="top:18%;right:calc(10% - 4px)"></div>
-  <div class="splash-gem" style="top:82%;right:calc(10% - 4px)"></div>
+  <div class="splash-gem" style="top:18%;left:calc(2% - 3px)"></div>
+  <div class="splash-gem" style="top:82%;left:calc(2% - 4px)"></div>
+  <div class="splash-gem" style="top:18%;right:calc(2% - 4px)"></div>
+  <div class="splash-gem" style="top:82%;right:calc(2% - 4px)"></div>
   <!-- partículas -->
   <div class="splash-ptcl" id="splashPtcl"></div>
   <!-- conteúdo -->
@@ -1689,11 +1691,7 @@ function initSplashParticles() {
     p.style.cssText = `left:${Math.random()*100}%;bottom:-10px;width:${s}px;height:${s}px;--dx:${dx}px;animation-duration:${dur}s;animation-delay:${del}s;`;
     wrap.appendChild(p);
   }
-  // logo starts floating after reveal
-  setTimeout(() => {
-    const logo = document.getElementById('splashLogo');
-    if (logo) logo.classList.add('floating');
-  }, 1400);
+  // logo float handled by CSS animation chain
 }
 
 function initLoginParticles() {
