@@ -34,6 +34,37 @@
   --font:'Sora',sans-serif;
   --serif:'Cormorant Garamond',serif;
 }
+/* ── TEMA CLARO ── */
+[data-theme="light"]{
+  --bg0:#F5F0E8;--bg1:#EDE6D8;--bg2:#E4DAC8;--bg3:#D8CEBC;--bg4:#C8BCA6;
+  --text:#1A1208;--muted:#6B5818;
+  --border:rgba(107,80,24,.22);--border2:rgba(107,80,24,.42);
+  --sh:0 4px 20px rgba(0,0,0,.1);--shg:0 4px 16px rgba(107,80,24,.18);
+}
+[data-theme="light"] html,[data-theme="light"] body{background:#F5F0E8}
+[data-theme="light"] .topbar{background:rgba(245,240,232,.97);border-bottom-color:rgba(107,80,24,.15)}
+[data-theme="light"] #pgLogin{background:radial-gradient(ellipse 100% 55% at 50% -5%,rgba(139,107,32,.14) 0%,transparent 52%),linear-gradient(165deg,#EDE0C4 0%,#F5F0E8 40%,#EAE0CC 100%)}
+[data-theme="light"] #pgLogin::after{background:radial-gradient(ellipse,rgba(139,107,32,.18) 0%,transparent 60%)}
+[data-theme="light"] .login-card{background:rgba(255,252,244,.8);border-color:rgba(107,80,24,.2);box-shadow:0 8px 32px rgba(0,0,0,.08)}
+[data-theme="light"] .wordmark{background:linear-gradient(180deg,#8B6B20 0%,#C8A020 45%,#5A4010 80%,#A07818 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+[data-theme="light"] .wordsub{color:rgba(90,64,16,.5)}
+[data-theme="light"] .inp{background:rgba(107,80,24,.05);border-color:rgba(107,80,24,.2);color:#1A1208}
+[data-theme="light"] .inp::placeholder{color:rgba(107,80,24,.3)}
+[data-theme="light"] .login-col-l,[data-theme="light"] .login-col-r{background:linear-gradient(180deg,transparent,rgba(107,80,24,.2) 20%,rgba(107,80,24,.2) 80%,transparent)}
+[data-theme="light"] .dish-card{background:#EAE0CC;border-color:rgba(107,80,24,.15)}
+[data-theme="light"] .dish-card.selected{background:#DDD0B0;border-color:#C8A020}
+[data-theme="light"] .dish-name{color:#1A1208}
+[data-theme="light"] .week-badge{background:rgba(107,80,24,.06);color:#6B5010;border-color:rgba(107,80,24,.12)}
+[data-theme="light"] .day-title{-webkit-text-fill-color:unset;color:#8B6B20}
+[data-theme="light"] .day-instr{color:rgba(107,80,24,.5)}
+[data-theme="light"] .nav-btn-prev{background:#E4DAC8;border-color:rgba(107,80,24,.22);color:#6B5010}
+[data-theme="light"] .card{background:#EDE6D8;border-color:rgba(107,80,24,.15)}
+[data-theme="light"] .drawer{background:#EDE6D8;border-left-color:rgba(107,80,24,.15)}
+[data-theme="light"] .gmo-box{background:#EDE6D8}
+[data-theme="light"] .splash-brand{background:linear-gradient(180deg,#8B6B20 0%,#C8A020 45%,#5A4010 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+[data-theme="light"] .atab{color:rgba(107,80,24,.5)}
+[data-theme="light"] .atab.on{background:rgba(107,80,24,.08);color:#8B6B20}
+[data-theme="light"] .stat-card,[data-theme="light"] .user-card{background:#E4DAC8;border-color:rgba(107,80,24,.15)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--font);overflow-x:hidden;font-size:16px}
 ::-webkit-scrollbar{width:3px}
@@ -461,21 +492,35 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
    DAY NAVIGATION
 ──────────────────────────────── */
 .day-nav-wrap{padding:14px 16px 0;overflow:hidden}
-.progress-dots{display:flex;justify-content:center;gap:10px;margin-bottom:12px}
+.day-tabs-wrap{padding:12px 14px 0;overflow-x:auto;scrollbar-width:none}
+.day-tabs-wrap::-webkit-scrollbar{display:none}
+.day-tabs{display:flex;gap:0}
+.day-tab-btn{
+  flex-shrink:0;padding:7px 13px;border-radius:50px;
+  font-size:11.5px;font-weight:700;letter-spacing:.02em;
+  color:rgba(212,175,55,.4);background:transparent;border:none;
+  cursor:pointer;transition:all .2s;font-family:var(--font);
+  white-space:nowrap;
+}
+.day-tab-btn.active{
+  background:rgba(212,175,55,.11);color:var(--g1);
+  box-shadow:0 0 0 1px rgba(212,175,55,.22);
+}
+.progress-dots{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0 4px}
 .p-dot{
-  width:13px;height:13px;border-radius:50%;
-  border:2px solid rgba(212,175,55,.25);transition:all .28s;cursor:pointer;
+  height:3px;border-radius:2px;
+  background:rgba(212,175,55,.18);
+  transition:all .3s cubic-bezier(.4,0,.2,1);cursor:pointer;
 }
-.p-dot.selected{
-  background:linear-gradient(135deg,var(--g3),var(--g2));
-  border-color:var(--g2);box-shadow:0 0 10px rgba(212,175,55,.5);transform:scale(1.25);
-}
-.p-dot.current:not(.selected){border-color:var(--g3);background:rgba(212,175,55,.15)}
+.p-dot.past{width:14px;background:rgba(212,175,55,.32)}
+.p-dot.current{width:26px;background:var(--g2);box-shadow:0 0 8px rgba(212,175,55,.45)}
+.p-dot.selected:not(.current){width:14px;background:rgba(212,175,55,.5)}
+.p-dot.future{width:7px}
 .day-slide-outer{overflow:hidden;position:relative}
 .day-slide-inner{animation-duration:.32s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.4,0,.2,1)}
 .day-slide-inner.anim-in-right{animation-name:slideInRight}
 .day-slide-inner.anim-in-left{animation-name:slideInLeft}
-.day-header{padding:20px 16px 8px;text-align:center}
+.day-header{padding:16px 16px 6px;text-align:center}
 .day-emoji{font-size:52px;line-height:1;margin-bottom:10px;display:block}
 .day-title{
   font-family:var(--serif);font-size:36px;font-weight:900;
@@ -492,49 +537,80 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
   gap:12px;padding:0 14px 14px;
 }
 .dish-card{
-  background:linear-gradient(160deg,var(--bg3),var(--bg2));
-  border:1.5px solid rgba(212,175,55,.15);
-  border-radius:var(--r);padding:22px 12px 18px;
+  background:var(--bg2);
+  border:1.5px solid rgba(212,175,55,.13);
+  border-radius:16px;overflow:hidden;
   cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:11px;
-  position:relative;overflow:hidden;min-height:148px;justify-content:center;text-align:center;
+  display:flex;flex-direction:column;
+  position:relative;
+  transition:border-color .22s,transform .22s,box-shadow .22s;
   will-change:transform;
-  transition:border-color .2s,box-shadow .2s;
 }
-.dish-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,.1),transparent 65%);
-  opacity:0;transition:opacity .22s;
+.dish-card:hover{
+  border-color:rgba(212,175,55,.35);
+  transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
 }
-.dish-card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;
-  background:linear-gradient(90deg,transparent,var(--g3),transparent);
-  opacity:0;transition:opacity .22s;
-}
-.dish-card:hover::before,.dish-card.selected::before{opacity:1}
-.dish-card.selected::after{opacity:1}
-.dish-card.popping{animation:dishPop .35s cubic-bezier(.34,1.56,.64,1)}
+.dish-card.popping{animation:dishPop .32s cubic-bezier(.34,1.56,.64,1)}
 .dish-card.selected{
   border-color:var(--g2);
-  background:linear-gradient(160deg,rgba(100,75,8,.28),var(--bg2));
-  box-shadow:0 0 0 1px rgba(212,175,55,.32),0 5px 22px rgba(212,175,55,.18);
+  box-shadow:0 0 0 1px rgba(212,175,55,.28),0 6px 22px rgba(212,175,55,.18);
 }
-.dish-emoji{
-  font-size:44px;line-height:1;display:block;
-  transition:transform .28s cubic-bezier(.34,1.56,.64,1);
+/* foto */
+.dish-img-wrap{
+  width:100%;aspect-ratio:4/3;
+  position:relative;overflow:hidden;background:var(--bg3);
 }
-.dish-card.selected .dish-emoji{animation:emojiFloat .38s cubic-bezier(.34,1.56,.64,1) forwards}
-.dish-name{font-size:14.5px;font-weight:700;line-height:1.35;color:var(--text)}
-.dish-card.selected .dish-name{color:var(--g1);font-weight:800}
+.dish-img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .4s ease;transform:scale(1.02);
+  display:block;
+}
+.dish-card:hover .dish-img,.dish-card.selected .dish-img{transform:scale(1.09)}
+.dish-skeleton{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--bg3) 25%,rgba(212,175,55,.07) 50%,var(--bg3) 75%);
+  background-size:200% 100%;
+  animation:skeletonMove 1.4s linear infinite;
+}
+@keyframes skeletonMove{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.dish-img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(6,4,2,.7) 100%);
+  opacity:0;transition:opacity .22s;
+}
+.dish-card:hover .dish-img-overlay,.dish-card.selected .dish-img-overlay{opacity:1}
 .dish-check{
-  position:absolute;top:10px;right:10px;
-  width:25px;height:25px;border-radius:50%;
+  position:absolute;top:8px;right:8px;
+  width:26px;height:26px;border-radius:50%;
   background:linear-gradient(135deg,var(--g4),var(--g2));
-  display:flex;align-items:center;justify-content:center;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
   opacity:0;transform:scale(0);
   box-shadow:0 2px 8px rgba(212,175,55,.4);
 }
-.dish-card.selected .dish-check{animation:checkIn .38s cubic-bezier(.34,1.56,.64,1) forwards;opacity:1}
+.dish-check svg{width:13px;height:13px;stroke:#0A0804;stroke-width:2.5;fill:none}
+.dish-card.selected .dish-check{animation:checkIn .35s cubic-bezier(.34,1.56,.64,1) forwards;opacity:1}
+/* bottom bar selected */
+.dish-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g2),transparent);
+  transform:scaleX(0);transition:transform .25s ease;
+}
+.dish-card.selected::after{transform:scaleX(1)}
+/* info */
+.dish-info{padding:11px 12px 13px}
+.dish-name{
+  font-size:14px;font-weight:700;line-height:1.35;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.dish-card.selected .dish-name{color:var(--g1)}
+.dish-tag{
+  display:flex;align-items:center;gap:5px;margin-top:5px;
+  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:rgba(212,175,55,.45);
+}
+.dish-card.selected .dish-tag{color:rgba(212,175,55,.75)}
+.dish-tag svg{width:9px;height:9px;fill:currentColor;flex-shrink:0}
 
 /* ────────────────────────────────
    NAV BUTTONS
@@ -542,9 +618,10 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 .nav-buttons{display:flex;align-items:center;gap:10px;padding:12px 14px 18px}
 .nav-btn-prev{
   background:var(--bg3);border:1.5px solid rgba(212,175,55,.2);
-  border-radius:var(--rsm);color:var(--text);
-  font-size:16px;font-weight:700;padding:15px 16px;
-  cursor:pointer;font-family:var(--font);transition:border-color .2s;flex-shrink:0;
+  border-radius:var(--rsm);color:rgba(212,175,55,.7);
+  padding:0;width:52px;height:52px;flex-shrink:0;
+  cursor:pointer;transition:border-color .2s;
+  display:flex;align-items:center;justify-content:center;
 }
 .nav-btn-prev:hover{border-color:var(--g3)}
 .nav-btn-prev:disabled{opacity:.3;cursor:not-allowed}
@@ -953,6 +1030,131 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 .has-safe-area .login-vol-btn{top:max(20px,env(safe-area-inset-top))}
 
 /* ─── */
+/* ── PREMIUM PERMISSION CARDS ── */
+@keyframes cardSlideUp{
+  0%{opacity:0;transform:translateX(-50%) translateY(40px) scale(.92)}
+  100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+}
+@keyframes cardPulseGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.0),0 28px 60px rgba(0,0,0,.8),0 8px 24px rgba(0,0,0,.5)}
+  50%{box-shadow:0 0 0 8px rgba(212,175,55,.06),0 28px 60px rgba(0,0,0,.8),0 8px 24px rgba(0,0,0,.5)}
+}
+@keyframes iconGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(212,175,55,.4))}50%{filter:drop-shadow(0 0 16px rgba(212,175,55,.8))}}
+.perm-card{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(40px) scale(.92);
+  width:min(360px,90vw);z-index:9000;
+  animation:cardSlideUp .55s cubic-bezier(.34,1.2,.64,1) forwards,
+            cardPulseGlow 3s ease-in-out 1s infinite;
+  /* 3D card look */
+  background:linear-gradient(160deg,#1E1508 0%,#120E06 50%,#0E0A04 100%);
+  border:1px solid rgba(212,175,55,.25);
+  border-top:1px solid rgba(212,175,55,.45);
+  border-radius:20px;
+  overflow:hidden;
+}
+.perm-card::before{/* top shimmer line */
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,215,0,.35),transparent);
+}
+.perm-card-icon-wrap{
+  display:flex;align-items:center;justify-content:center;
+  padding:24px 0 16px;position:relative;
+}
+.perm-card-icon-circle{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.05));
+  border:1px solid rgba(212,175,55,.3);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:2;
+  animation:iconGlow 3s ease-in-out infinite;
+}
+.perm-card-icon-circle svg{color:var(--g2)}
+/* decorative rings */
+.perm-card-icon-ring{
+  position:absolute;border-radius:50%;border:1px solid rgba(212,175,55,.12);
+}
+.perm-card-body{padding:0 22px 22px;text-align:center}
+.perm-card-title{
+  font-family:var(--serif);font-size:22px;font-weight:400;
+  letter-spacing:.04em;
+  background:linear-gradient(135deg,var(--g1),var(--g2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.perm-card-desc{
+  font-size:13px;font-weight:400;line-height:1.65;
+  color:rgba(240,220,160,.55);margin-bottom:20px;
+}
+.perm-card-actions{display:flex;gap:10px}
+.perm-btn-yes{
+  flex:2;height:48px;border:none;border-radius:12px;
+  background:linear-gradient(90deg,#7A5E18,#C8A020,#FFD700,#C8A020,#7A5E18);
+  background-size:200% 100%;
+  color:#0A0804;font-family:var(--font);
+  font-size:13px;font-weight:700;letter-spacing:.08em;
+  cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:0 2px 0 rgba(0,0,0,.3),0 4px 16px rgba(212,175,55,.35),inset 0 1px 0 rgba(255,255,255,.15);
+  transition:all .28s;
+}
+.perm-btn-yes:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 2px 0 rgba(0,0,0,.3),0 8px 24px rgba(212,175,55,.55),inset 0 1px 0 rgba(255,255,255,.2)}
+.perm-btn-yes::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.13),transparent);
+  border-radius:12px 12px 0 0;pointer-events:none;
+}
+.perm-btn-no{
+  flex:1;height:48px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(212,175,55,.15);
+  border-radius:12px;
+  color:rgba(212,175,55,.45);font-family:var(--font);
+  font-size:12px;font-weight:500;letter-spacing:.06em;
+  cursor:pointer;transition:all .2s;
+}
+.perm-btn-no:hover{background:rgba(255,255,255,.08);color:rgba(212,175,55,.65)}
+
+/* ── PRATOS SALVOS ── */
+.ps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,44vw),1fr));gap:10px;margin-top:12px}
+.ps-card{
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:var(--rsm);padding:12px 12px 10px;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.ps-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shg)}
+.ps-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),transparent);opacity:0;transition:opacity .2s}
+.ps-card:hover::before{opacity:1}
+.ps-card-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin-bottom:8px;background:var(--bg4)}
+.ps-card-img-ph{width:100%;aspect-ratio:16/9;border-radius:6px;margin-bottom:8px;background:var(--bg4);display:flex;align-items:center;justify-content:center}
+.ps-card-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px}
+.ps-card-tag{font-size:10px;color:var(--g3);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.ps-card-del{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(168,40,32,.75);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.ps-card:hover .ps-card-del{opacity:1}
+.ps-add-btn{
+  background:transparent;border:1.5px dashed rgba(212,175,55,.25);
+  border-radius:var(--rsm);padding:16px 12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;transition:all .2s;color:rgba(212,175,55,.4);font-family:var(--font);font-size:12px;font-weight:600;
+}
+.ps-add-btn:hover{border-color:rgba(212,175,55,.5);color:rgba(212,175,55,.7);background:rgba(212,175,55,.04)}
+
+/* ── THEME-AWARE REFINEMENTS ── */
+/* Força fundo e cor consistente em todos os backgrounds via variáveis */
+.pg,.gmo-box,.drawer,.epicker-box,.spicker-box,.perm-card{
+  transition:background .3s,color .3s,border-color .3s;
+}
+[data-theme="light"] .perm-card{
+  background:linear-gradient(160deg,#EDE0C4 0%,#F5F0E8 50%,#EAE0CC 100%);
+  border-color:rgba(107,80,24,.2);
+}
+[data-theme="light"] .ps-card{background:#DDD4B8;border-color:rgba(107,80,24,.18)}
+[data-theme="light"] .ps-add-btn{border-color:rgba(107,80,24,.2);color:rgba(107,80,24,.4)}
+[data-theme="light"] .accord{border-color:rgba(107,80,24,.15)}
+[data-theme="light"] .accord-hd{background:rgba(107,80,24,.04)}
+[data-theme="light"] .prato-item{background:rgba(107,80,24,.04);border-color:rgba(107,80,24,.12)}
+[data-theme="light"] .prato-item input{color:#1A1208}
+[data-theme="light"] .adm-tabs{background:rgba(245,240,232,.97);border-bottom-color:rgba(107,80,24,.15)}
+
 /* PERFORMANCE */
 @media(max-width:600px){
   .field-row{grid-template-columns:1fr}
@@ -1068,7 +1270,7 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
   <div class="login-col-gem" style="top:20%;right:calc(10% - 4px)"></div>
   <div class="login-col-gem" style="top:80%;right:calc(10% - 4px)"></div>
   <div class="ptcl" id="ptcl"></div>
-  <button class="login-vol-btn" id="loginVolBtn" onclick="toggleVoice()" title="Ligar/desligar voz">🔊</button>
+  <button class="login-vol-btn" id="loginVolBtn" onclick="toggleVoice()" title="Ligar/desligar voz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
   <div class="login-shell">
     <div class="login-brand">
       <div class="logo-wrap">
@@ -1089,14 +1291,14 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
       <div class="inp-wrap">
         <div class="inp-lbl-top">Nome e Sobrenome</div>
         <div class="inp-line">
-          <span class="inp-icon-lf">✦</span>
+          <span class="inp-icon-lf"></span>
           <input class="inp" id="inUser" type="text" placeholder="Digite seu nome"
             oninput="autoCapName(this);clearErr()"
             onkeydown="if(event.key==='Enter')doLogin()"
             autocomplete="name" autocapitalize="words" autocorrect="off">
         </div>
       </div>
-      <div class="login-err" id="loginErr">⚠ Nome não encontrado</div>
+      <div class="login-err" id="loginErr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Nome não encontrado</div>
       <button class="btn-enter" id="btnEnter" onclick="doLogin()">Entrar</button>
     </div>
     <div class="login-tagline">É fácil ser feliz aqui</div>
@@ -1112,12 +1314,12 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 <!-- SUCCESS PAGE -->
 <div id="pgSuccess" class="pg">
   <div class="suc-shell">
-    <div class="suc-icon-big">🎉</div>
+    <div class="suc-icon-big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="60" height="60" style="color:#D4AF37"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
     <div class="suc-title">Pedido Enviado!</div>
     <div class="suc-name" id="sucName">—</div>
     <div class="suc-week" id="sucWeekTxt">—</div>
     <div class="suc-dishes" id="sucDishes"></div>
-    <div class="suc-wait">⏳ Aguarde o cardápio da<br><strong>próxima semana</strong> para fazer<br>um novo pedido!</div>
+    <div class="suc-wait"> Aguarde o cardápio da<br><strong>próxima semana</strong> para fazer<br>um novo pedido!</div>
 
   </div>
 </div>
@@ -1130,28 +1332,61 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 <div class="drawer" id="drawer">
   <div class="drawer-head">
     <span class="drawer-title">Meu Perfil</span>
-    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    <button class="drawer-close" onclick="closeDrawer()">×</button>
   </div>
   <div class="drawer-body">
+    <!-- Avatar -->
     <div class="avt-section">
-      <div class="avt-big" id="avtBig" onclick="document.getElementById('avatarFile').click()">
-        <span id="avtEmoji">👤</span>
-        <img id="avtImg" style="display:none">
-        <div class="avt-big-overlay">📷</div>
+      <div class="avt-big" id="avtBig" onclick="pickAvatar()">
+        <div id="avtImg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36" style="color:var(--g3)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="avt-big-overlay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="20" height="20"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
       </div>
-      <input type="file" id="avatarFile" accept="image/*" onchange="changeAvatar(event)" style="display:none">
-      <div class="avt-name" id="drawerNome">—</div>
+      <div class="avt-name" id="drawerName">—</div>
       <div class="avt-cargo" id="drawerCargo">—</div>
     </div>
-    <div id="drawerInfos">
-      <div class="dinfo-row"><div class="dinfo-icon">🔑</div><div><div class="dinfo-text" id="drawerLogin">—</div><div class="dinfo-sub">Login de acesso</div></div></div>
-      <div class="dinfo-row"><div class="dinfo-icon">🏢</div><div><div class="dinfo-text">Golden Shopping Calhau</div><div class="dinfo-sub">São Luís, Maranhão</div></div></div>
-      <div class="dinfo-row"><div class="dinfo-icon">🔊</div><div><div class="dinfo-text" id="drawerVoiceTxt">Voz ativada</div><div class="dinfo-sub"><button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="toggleVoice()">Alternar voz</button></div></div></div>
-      <div class="dinfo-row"><div class="dinfo-icon">☁️</div><div><div class="dinfo-text" id="drawerSyncTxt">Verificando...</div><div class="dinfo-sub">Sincronização</div></div></div>
+
+    <!-- Infos -->
+    <div class="dinfo-row">
+      <div class="dinfo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18" style="color:var(--g3)"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+      </div>
+      <div><div class="dinfo-text" id="drawerLogin">—</div><div class="dinfo-sub">Login de acesso</div></div>
+    </div>
+    <div class="dinfo-row">
+      <div class="dinfo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18" style="color:var(--g3)"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div><div class="dinfo-text">Golden Shopping Calhau</div><div class="dinfo-sub">São Luís, Maranhão</div></div>
+    </div>
+
+    <!-- Voz -->
+    <div class="dinfo-row" style="justify-content:space-between;cursor:pointer" onclick="toggleVoice()">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div class="dinfo-icon" id="drawerVolIco">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18" style="color:var(--g3)"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </div>
+        <div><div class="dinfo-text" id="drawerVoiceTxt">Voz ativada</div><div class="dinfo-sub">Toque para alternar</div></div>
+      </div>
+      <div id="drawerVolDot" style="width:10px;height:10px;border-radius:50%;background:#2A8040;flex-shrink:0"></div>
+    </div>
+
+    <!-- Tema claro / escuro -->
+    <div class="dinfo-row" style="justify-content:space-between;cursor:pointer" onclick="toggleTheme()">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div class="dinfo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18" style="color:var(--g3)" id="themeIcon"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <div><div class="dinfo-text" id="themeTxt">Tema escuro</div><div class="dinfo-sub">Toque para alternar</div></div>
+      </div>
+      <div id="themeIndicator" style="width:10px;height:10px;border-radius:50%;background:var(--g4);flex-shrink:0"></div>
     </div>
   </div>
-  <div class="drawer-footer">
-    <button class="btn-logout-full" onclick="doLogout()">🚪 Sair da conta</button>
+    <div class="drawer-footer">
+    <button class="btn-logout-full" onclick="doLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sair da conta</button>
   </div>
 </div>
 
@@ -1159,8 +1394,8 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 <div class="spicker-overlay" id="spickerOverlay" onclick="if(event.target===this)spickerClose()">
   <div class="spicker-box">
     <div class="spicker-head">
-      <span class="spicker-title">🏢 Setor do Funcionário</span>
-      <button class="spicker-close" onclick="spickerClose()">✕</button>
+      <span class="spicker-title"> Setor do Funcionário</span>
+      <button class="spicker-close" onclick="spickerClose()">×</button>
     </div>
     <div class="spicker-sub">Selecione o setor de trabalho no Golden Shopping</div>
     <div class="setor-grid" id="setorGrid"></div>
@@ -1172,8 +1407,8 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 <div class="epicker-overlay" id="epickerOverlay" onclick="if(event.target===this)epickerClose()">
   <div class="epicker-box">
     <div class="epicker-head">
-      <span class="epicker-title">🍽️ Escolher Emoji</span>
-      <button class="epicker-close" onclick="epickerClose()">✕</button>
+      <span class="epicker-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg> Escolher Emoji</span>
+      <button class="epicker-close" onclick="epickerClose()">×</button>
     </div>
     <div class="epicker-cats" id="epickerCats"></div>
     <div class="epicker-grid" id="epickerGrid"></div>
@@ -1183,7 +1418,7 @@ html,body{height:100%;background:var(--bg0);color:var(--text);font-family:var(--
 <!-- CUSTOM MODAL (replaces all prompt/confirm) -->
 <div class="gmo" id="gmoOverlay" onclick="if(event.target===this)gmoCancel()">
   <div class="gmo-box">
-    <button class="gmo-close" onclick="gmoCancel()">✕</button>
+    <button class="gmo-close" onclick="gmoCancel()">×</button>
     <div class="gmo-title" id="gmoTitle">Título</div>
     <div class="gmo-sub"  id="gmoSub"></div>
     <div id="gmoFields"></div>
@@ -1250,7 +1485,8 @@ const DADOS_PADRAO = {
   users:{
     goldenadmin:{login:'goldenadmin',pin:'1408',nome:'Administrador',cargo:'Direção Geral',role:'admin',photo:null}
   },
-  pedidos:{}
+  pedidos:{},
+  pratosSalvos: [],
 };
 
 // ═══════════════════════════════════════
@@ -1314,14 +1550,14 @@ function toggleVoice() {
   updateVoiceUI();
   if (voiceEnabled) speak('Voz ativada. Bem-vindo ao Golden Cardápio!', true);
   else stopVoice();
-  toast(voiceEnabled ? '🔊 Voz ativada' : '🔇 Voz desativada', 'info');
+  toast(voiceEnabled ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Voz ativada' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg> Voz desativada', 'info');
 }
 
 function updateVoiceUI() {
   const btn = document.getElementById('loginVolBtn');
-  if (btn) btn.textContent = voiceEnabled ? '🔊' : '🔇';
+  if (btn) btn.innerHTML = voiceEnabled ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
   const tbBtn = document.getElementById('tbVolBtn');
-  if (tbBtn) tbBtn.textContent = voiceEnabled ? '🔊' : '🔇';
+  if (tbBtn) tbBtn.innerHTML = voiceEnabled ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
   const txt = document.getElementById('drawerVoiceTxt');
   if (txt) txt.textContent = voiceEnabled ? 'Voz ativada' : 'Voz desativada';
 }
@@ -1387,9 +1623,45 @@ function normalizeDB(data) {
       data.cardapio[day].pratos = Object.values(data.cardapio[day].pratos);
     if (!data.cardapio[day].emojis) data.cardapio[day].emojis = [];
   });
-  if (!data.users)   data.users   = DADOS_PADRAO.users;
+  if (!data.users)       data.users       = DADOS_PADRAO.users;
+  if (!data.pratosSalvos) data.pratosSalvos = [];
   if (!data.pedidos) data.pedidos = {};
   if (!data.cardapio['Domingo']) data.cardapio['Domingo'] = DADOS_PADRAO.cardapio['Domingo'];
+}
+
+// ── Imagem real da comida via Unsplash ──
+function dishImgUrl(prato, customPhoto) {
+  if (customPhoto) return customPhoto;
+  // Stable Unsplash photo IDs by food category
+  const PHOTOS = {
+    frango:     ['1598103442097-8cf10b9e3e54','1606728035253-49e8a23146de','1604909052868-4171a3a7e52f'],
+    bife:       ['1546069901-bee490f0b512','1558030006-c14a04a2f3c7','1529692236671-f1f6cf9683ba'],
+    peixe:      ['1467003909585-2f8a72700288','1519708227418-a2d0260ff470','1535473895227-bdecb20fb157'],
+    lasanha:    ['1574894709920-11b28e7367e3','1551183053-bf91798d6921','1621996659950-d7790aa3f4b6'],
+    feijoada:   ['1547496614-0f5641d0f67d','1505253716362-afaea1d3d1af','1565299585323-38d6b0865b47'],
+    macarr:     ['1555949258-eb67b1ef0ceb','1621996659950-d7790aa3f4b6','1473093295043-cae9149b64d9'],
+    risoto:     ['1476224203421-74177e79e96b','1608797178974-15b35a64ede9','1633337474564-1d9478ca4e2e'],
+    costela:    ['1544025162-d76538faa5eb','1529193591184-b1d58069ecdd','1555939594-4660e18f2573'],
+    picanha:    ['1558030006-c14a04a2f3c7','1546069901-bee490f0b512','1529692236671-f1f6cf9683ba'],
+    churrasco:  ['1555939594-4660e18f2573','1544025162-d76538faa5eb','1529193591184-b1d58069ecdd'],
+    camarão:    ['1565680018434-b513d5e5fd47','1519708227418-a2d0260ff470','1467003909585-2f8a72700288'],
+    salada:     ['1512621776951-a57141f2eefd','1546069901-bee490f0b512','1498837167922-ddd27525d352'],
+    salmão:     ['1519708227418-a2d0260ff470','1467003909585-2f8a72700288','1535473895227-bdecb20fb157'],
+    batata:     ['1518977676601-b53f82aba655','1547592180-85f173990554','1565958011703-44f9829ba187'],
+  };
+  const lower = prato.toLowerCase();
+  let photos = null;
+  for (const [k,v] of Object.entries(PHOTOS)) {
+    if (lower.includes(k)) { photos = v; break; }
+  }
+  // Fallback: general food photos
+  if (!photos) photos = [
+    '1504674900247-0877df9cc836','1490645935967-10de6ba17061','1476224203421-74177e79e96b',
+    '1555949258-eb67b1ef0ceb','1606728035253-49e8a23146de','1534482421-64566f976cfa'
+  ];
+  // Pick consistently by name
+  const idx = prato.split('').reduce((a,c)=>a+c.charCodeAt(0),0) % photos.length;
+  return `https://images.unsplash.com/photo-${photos[idx]}?w=400&h=300&fit=crop&q=80`;
 }
 
 const EM = n => {
@@ -1414,7 +1686,7 @@ const EM = n => {
   if (n.includes('salada')) return '🥗';
   if (n.includes('assado')||n.includes('bisteca')||n.includes('picadinho')) return '🥩';
   if (n.includes('filé')) return '🥩';
-  return '🍽️';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>';
 };
 
 // ═══════════════════════════════════════
@@ -1442,8 +1714,8 @@ function salvar() {
 }
 function updateSyncStatus(s) {
   const el=document.getElementById('drawerSyncTxt'); if(!el) return;
-  if(s==='online')  el.textContent='✅ Sincronizado com a nuvem';
-  if(s==='offline') el.textContent='⚠️ Salvo localmente (sem internet)';
+  if(s==='online')  el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Sincronizado com a nuvem';
+  if(s==='offline') el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Salvo localmente (sem internet)';
   if(s==='syncing') el.textContent='🔄 Sincronizando...';
 }
 function syncBackground() {
@@ -1486,7 +1758,7 @@ function startRealtimeListener() {
       if (!meuPedido) {
         SEL = {}; currentDayIndex = 0;
         showPage('pgUser'); renderUser();
-        toast('📋 Novo cardápio disponível!', 'info');
+        toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Novo cardápio disponível!', 'info');
         speak('Novo cardápio disponível! Faça sua escolha.', true);
       }
     }
@@ -1570,7 +1842,7 @@ async function iniciar() {
     try{localStorage.setItem(CACHE_KEY,JSON.stringify(DB));}catch(e){}
     hideLoading(); showPage('pgLogin'); updateVoiceUI();
     setTimeout(()=>{ if(_voiceUnlocked) speakLogin(); else { const _f=()=>{speakLogin();document.removeEventListener('touchstart',_f);document.removeEventListener('click',_f);}; document.addEventListener('touchstart',_f,{once:true}); document.addEventListener('click',_f,{once:true}); } }, 500);
-    toast('⚠️ Modo offline ativado','info');
+    toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Modo offline ativado','info');
   }, 5000);
   try {
     const snap = await DB_REF.once('value');
@@ -1582,14 +1854,14 @@ async function iniciar() {
     if(settled)return; settled=true; clearTimeout(fbTimer);
     DB=JSON.parse(JSON.stringify(DADOS_PADRAO));
     try{localStorage.setItem(CACHE_KEY,JSON.stringify(DB));}catch(e){}
-    toast('⚠️ Modo offline','err');
+    toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Modo offline','err');
   }
   hideLoading(); showPage('pgLogin'); updateVoiceUI();
   setTimeout(()=>{ if(_voiceUnlocked) speakLogin(); else { const _f=()=>{speakLogin();document.removeEventListener('touchstart',_f);document.removeEventListener('click',_f);}; document.addEventListener('touchstart',_f,{once:true}); document.addEventListener('click',_f,{once:true}); } }, 500);
 }
 
-window.addEventListener('online',  ()=>{ isOnline=true;  toast('🟢 Conexão restabelecida','ok'); syncBackground(); });
-window.addEventListener('offline', ()=>{ isOnline=false; toast('🔴 Sem conexão — modo offline','err'); });
+window.addEventListener('online',  ()=>{ isOnline=true;  toast(' Conexão restabelecida','ok'); syncBackground(); });
+window.addEventListener('offline', ()=>{ isOnline=false; toast(' Sem conexão — modo offline','err'); });
 
 // ═══════════════════════════════════════
 //  LOGIN
@@ -1610,7 +1882,7 @@ function doLogin() {
   if(btn){btn.textContent='Verificando...';btn.disabled=true;}
 
   setTimeout(()=>{
-    if(btn){btn.textContent='✦ ENTRAR ✦';btn.disabled=false;}
+    if(btn){btn.textContent=' ENTRAR ';btn.disabled=false;}
 
     // Admin — aceita "goldenadmin" ou "Administrador"
     const low = raw.toLowerCase().replace(/\s/g,'');
@@ -1725,22 +1997,22 @@ function launchConfetti() {
 // ═══════════════════════════════════════
 function mostrarPedidoJaFeito(p) {
   const el = document.getElementById('pgUser');
-  const s = SETORES_GOLDEN?.find(x=>x.id===CU?.setor)||{ico:'👤',nome:CU?.cargo||''};
+  const s = SETORES_GOLDEN?.find(x=>x.id===CU?.setor)||{ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',nome:CU?.cargo||''};
   el.innerHTML = `
     <div class="topbar">
       <div class="tb-brand">
         <img src="logo.png" alt="Golden" onerror="this.style.display='none'">
       </div>
       <div class="tb-actions">
-        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()">${voiceEnabled?'🔊':'🔇'}</button>
-        <button class="avatar-btn" onclick="openDrawer()">${CU?.photo?`<img src="${CU.photo}">`:'👤'}</button>
+        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()">${voiceEnabled?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'}</button>
+        <button class="avatar-btn" onclick="openDrawer()">${CU?.photo?`<img src="${CU.photo}">`:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'}</button>
       </div>
     </div>
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center">
-      <div style="font-size:72px;margin-bottom:16px;animation:starPop .6s ease">✅</div>
+      <div style="font-size:72px;margin-bottom:16px;animation:starPop .6s ease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg></div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--gold-2),var(--gold-1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">Pedido Feito!</div>
       <div style="font-size:16px;color:var(--gold-3);font-weight:700;margin-bottom:4px">${CU?.nome}</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:24px">📅 ${p.semana||weekStr()}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:24px"> ${p.semana||weekStr()}</div>
       <div style="width:100%;max-width:360px;margin-bottom:28px">
         ${Object.entries(p.dias||{}).filter(([,v])=>v).map(([dia,prato])=>`
           <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(212,160,23,.07);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;text-align:left">
@@ -1752,7 +2024,7 @@ function mostrarPedidoJaFeito(p) {
           </div>`).join('')}
       </div>
       <div style="padding:16px 20px;background:rgba(212,160,23,.07);border:1px solid var(--border-2);border-radius:14px;font-size:14px;font-weight:600;color:var(--gold-2);line-height:1.6;max-width:340px;width:100%">
-        ⏳ Aguarde o cardápio da<br><strong>próxima semana</strong>!
+         Aguarde o cardápio da<br><strong>próxima semana</strong>!
       </div>
     </div>`;
   showPage('pgUser');
@@ -1778,22 +2050,31 @@ function renderUser() {
         <img src="logo.png" alt="Golden" onerror="this.style.display='none'">
       </div>
       <div class="tb-actions">
-        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()" title="Ligar/desligar voz">${voiceEnabled?'🔊':'🔇'}</button>
-        <button class="avatar-btn" onclick="openDrawer()">${CU?.photo?`<img src="${CU.photo}">`:'👤'}</button>
+        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()" title="Ligar/desligar voz">
+          ${voiceEnabled
+            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`
+            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`
+          }
+        </button>
+        <button class="avatar-btn" onclick="openDrawer()">
+          ${CU?.photo
+            ? `<img src="${CU.photo}">`
+            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+          }
+        </button>
       </div>
     </div>
-    <div class="week-badge">📅 Semana de ${weekStr()}</div>
-    <div class="day-nav-wrap">
-      <div class="progress-dots" id="progressDots"></div>
-    </div>
+    <div class="week-badge">Semana de ${weekStr()}</div>
+    <div class="day-tabs-wrap"><div class="day-tabs" id="dayTabs"></div></div>
+    <div class="progress-dots" id="progressDots"></div>
     <div class="day-slide-outer" id="daySlideOuter">
-      <div class="day-slide-inner" id="daySlide">
-        <!-- day content here -->
-      </div>
+      <div class="day-slide-inner" id="daySlide"></div>
     </div>
     <div class="nav-buttons">
-      <button class="nav-btn-prev" id="btnPrev" onclick="navDay(-1)">← Anterior</button>
-      <button class="nav-btn-next" id="btnNext" onclick="navDay(1)">Próximo dia →</button>
+      <button class="nav-btn-prev" id="btnPrev" onclick="navDay(-1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="nav-btn-next" id="btnNext" onclick="navDay(1)">Próximo dia</button>
     </div>
   `;
 
@@ -1805,10 +2086,19 @@ function renderUser() {
 function renderProgressDots() {
   const days = diasKeys();
   const dots = document.getElementById('progressDots'); if(!dots)return;
-  dots.innerHTML = days.map((day,i)=>`
-    <div class="p-dot ${SEL[day]?'selected':''} ${i===currentDayIndex?'current':''}" 
-         onclick="goToDay(${i})" title="${day}"></div>
-  `).join('');
+  dots.innerHTML = days.map((day,i)=>{
+    let cls = 'future';
+    if(i < currentDayIndex) cls = SEL[day] ? 'past selected' : 'past';
+    else if(i === currentDayIndex) cls = 'current';
+    return `<div class="p-dot ${cls}" onclick="goToDay(${i})" title="${day}"></div>`;
+  }).join('');
+
+  // Day tabs
+  const tabs = document.getElementById('dayTabs');
+  if(tabs) tabs.innerHTML = days.map((day,i)=>`
+    <button class="day-tab-btn ${i===currentDayIndex?'active':''}" onclick="goToDay(${i})">
+      ${day.split('-')[0].split(' ')[0]}
+    </button>`).join('');
 }
 
 function renderCurrentDay(animDir) {
@@ -1819,26 +2109,44 @@ function renderCurrentDay(animDir) {
 
   const slide = document.getElementById('daySlide'); if(!slide)return;
 
-  // Build content
+  // Build content — image-first cards, no emojis
   const content = `
     <div class="day-header">
-      <span class="day-emoji">${info.emoji}</span>
       <div class="day-title">${day}</div>
+      <div class="day-instr">Escolha seu almoço desta semana</div>
     </div>
-    <div class="day-instr"> Escolha seu almoço com um toque 👇</div>
     <div class="dish-grid" id="dishGrid">
-      ${info.pratos.map((prato,i)=>`
-        <div class="dish-card ${SEL[day]===prato?'selected':''}" onclick="selectDish('${day.replace(/'/g,"\\'")}','${prato.replace(/'/g,"\\'")}')">
-          <div class="dish-check">✓</div>
-          <span class="dish-emoji">${info.emojis?.[i] || EM(prato)}</span>
-          <span class="dish-name">${prato}</span>
-        </div>
-      `).join('')}
+      ${info.pratos.map((prato,i)=>{
+        const sel = SEL[day]===prato;
+        const customPhoto = DB?.cardapio?.[day]?.fotos?.[i] || null;
+        const imgUrl = dishImgUrl(prato, customPhoto);
+        const sd = day.replace(/'/g,"\\'"), sp = prato.replace(/'/g,"\\'");
+        const uid = `sk_${currentDayIndex}_${i}`;
+        return `
+        <div class="dish-card ${sel?'selected':''}" onclick="selectDish('${sd}','${sp}')">
+          <div class="dish-img-wrap">
+            <div class="dish-skeleton" id="${uid}"></div>
+            <img class="dish-img" src="${imgUrl}" alt="${prato}"
+              onload="const s=document.getElementById('${uid}');if(s)s.remove()"
+              onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop';const s=document.getElementById('${uid}');if(s)s.remove()">
+            <div class="dish-img-overlay"></div>
+            <div class="dish-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0A0804" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="dish-info">
+            <div class="dish-name">${prato}</div>
+            <div class="dish-tag">${sel
+              ? `<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>&nbsp;Selecionado`
+              : `Toque para escolher`
+            }</div>
+          </div>
+        </div>`;
+      }).join('')}
     </div>
   `;
 
   if (animDir) {
-    // Animate
     slide.style.animation = 'none';
     slide.innerHTML = content;
     void slide.offsetWidth;
@@ -1855,10 +2163,10 @@ function renderCurrentDay(animDir) {
   if(btnNext){
     const isLast = currentDayIndex === days.length - 1;
     if(isLast){
-      btnNext.textContent = '📋 Revisar Pedido';
+      btnNext.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="margin-right:6px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Revisar Pedido`;
       btnNext.classList.add('review-mode');
     } else {
-      btnNext.textContent = 'Próximo dia →';
+      btnNext.innerHTML = `Próximo dia`;
       btnNext.classList.remove('review-mode');
     }
   }
@@ -1934,17 +2242,17 @@ function irRevisao() {
         Revisar Pedido
       </div>
       <div class="tb-actions">
-        <button class="icon-btn" onclick="toggleVoice()">${voiceEnabled?'🔊':'🔇'}</button>
-        <button class="avatar-btn" onclick="openDrawer()">${CU?.photo?`<img src="${CU.photo}">`:'👤'}</button>
+        <button class="icon-btn" onclick="toggleVoice()">${voiceEnabled?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'}</button>
+        <button class="avatar-btn" onclick="openDrawer()">${CU?.photo?`<img src="${CU.photo}">`:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'}</button>
       </div>
     </div>
     <div class="rev-body">
       <div class="rev-hero">
-        <div class="rev-avatar">${CU?.photo?`<img src="${CU.photo}">`:CU?.role==='admin'?'👑':'👤'}</div>
+        <div class="rev-avatar">${CU?.photo?`<img src="${CU.photo}">`:CU?.role==='admin'?'👑':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'}</div>
         <div>
           <div class="rev-name">${CU?.nome}</div>
           <div class="rev-cargo">${CU?.cargo}</div>
-          <div class="rev-week">📅 ${weekStr()}</div>
+          <div class="rev-week"> ${weekStr()}</div>
         </div>
       </div>
       ${days.map(dia=>{
@@ -1989,7 +2297,7 @@ function enviarCardapio() {
 
   // Build success screen content
   document.getElementById('sucName').textContent = CU.nome + ' · ' + CU.cargo;
-  document.getElementById('sucWeekTxt').textContent = '📅 Semana de ' + weekStr();
+  document.getElementById('sucWeekTxt').textContent = ' Semana de ' + weekStr();
   const sucDishes = document.getElementById('sucDishes');
   sucDishes.innerHTML = '';
   diasKeys().forEach(dia=>{
@@ -2008,7 +2316,7 @@ function enviarCardapio() {
 
   launchConfetti();
   showPage('pgSuccess');
-  toast('🎉 Cardápio enviado com sucesso!');
+  toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="60" height="60" style="color:#D4AF37"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> Cardápio enviado com sucesso!');
   vibrate([30,20,30,20,50]);
 
   let msg = 'Pedido enviado com sucesso! ';
@@ -2020,6 +2328,24 @@ function enviarCardapio() {
 // ═══════════════════════════════════════
 //  DRAWER
 // ═══════════════════════════════════════
+// ── THEME TOGGLE ──
+let _currentTheme = localStorage.getItem('gc_theme') || 'dark';
+function applyTheme(t) {
+  _currentTheme = t;
+  document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : '');
+  localStorage.setItem('gc_theme', t);
+  // Update drawer indicators
+  const txt = document.getElementById('themeTxt');
+  const ind = document.getElementById('themeIndicator');
+  if(txt) txt.textContent = t === 'light' ? 'Tema claro' : 'Tema escuro';
+  if(ind) ind.style.background = t === 'light' ? '#C8A020' : 'var(--g4)';
+}
+function toggleTheme() {
+  applyTheme(_currentTheme === 'light' ? 'dark' : 'light');
+}
+// Apply on load
+applyTheme(_currentTheme);
+
 function openDrawer() {
   if(!CU) return;
   document.getElementById('drawerNome').textContent = CU.nome;
@@ -2038,7 +2364,7 @@ function updateAvatarUI() {
   if(!CU) return;
   const photo=CU.photo, emoji=document.getElementById('avtEmoji'), img=document.getElementById('avtImg');
   if(photo){if(img){img.src=photo;img.style.display='block';}if(emoji)emoji.style.display='none';}
-  else{if(img)img.style.display='none';if(emoji){emoji.style.display='block';emoji.textContent=CU.role==='admin'?'👑':'👤';}}
+  else{if(img)img.style.display='none';if(emoji){emoji.style.display='block';emoji.textContent=CU.role==='admin'?'👑':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';}}
 }
 function changeAvatar(event) {
   const file=event.target.files[0]; if(!file) return;
@@ -2047,7 +2373,7 @@ function changeAvatar(event) {
   reader.onload=e=>{
     CU.photo=e.target.result;
     if(DB.users?.[CU.login]) DB.users[CU.login].photo=CU.photo;
-    salvar();updateAvatarUI();toast('✅ Foto atualizada!');
+    salvar();updateAvatarUI();toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Foto atualizada!');
   };
   reader.readAsDataURL(file);
 }
@@ -2063,20 +2389,25 @@ function renderAdmin() {
         <img src="logo.png" alt="Golden" onerror="this.style.display='none'">
       </div>
       <div class="tb-actions">
-        <span class="sync-badge ${isOnline?'online':'offline'}" id="admSync">${isOnline?'🟢 Online':'🔴 Offline'}</span>
-        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()">${voiceEnabled?'🔊':'🔇'}</button>
-        <button class="avatar-btn" onclick="openDrawer()">👑</button>
+
+        <button class="icon-btn" id="tbVolBtn" onclick="toggleVoice()">${voiceEnabled?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'}</button>
+        <button class="icon-btn" onclick="toggleTheme()" title="Alternar tema">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="avatar-btn" onclick="openDrawer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
       </div>
     </div>
     <div class="adm-tabs">
       <button class="atab on" id="atab-pedidos" onclick="aTab('pedidos')">
-        <span class="atab-ico">📋</span>Pedidos
+        <span class="atab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>Pedidos
       </button>
       <button class="atab" id="atab-cardapio" onclick="aTab('cardapio')">
-        <span class="atab-ico">🍽️</span>Cardápio
+        <span class="atab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg></span>Cardápio
       </button>
       <button class="atab" id="atab-equipe" onclick="aTab('equipe')">
-        <span class="atab-ico">👥</span>Equipe
+        <span class="atab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Equipe
       </button>
     </div>
     <div id="ap-pedidos"  class="apanel on"></div>
@@ -2103,13 +2434,13 @@ function renderPanelPedidos() {
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
         <div>
-          <div class="card-title">📋 Pedidos da Semana</div>
+          <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Pedidos da Semana</div>
           <div style="font-size:13px;color:var(--muted);margin-top:2px;font-weight:500">${weekStr()}</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-g btn-sm" onclick="atualizarPedidos()">🔄 Atualizar Pedidos</button>
           <button class="btn btn-g btn-sm" onclick="exportarPedidosTxt()">📤 Exportar</button>
-          <button class="btn btn-danger btn-sm" onclick="limparSemana()">🗑️ Limpar</button>
+          <button class="btn btn-danger btn-sm" onclick="limparSemana()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Limpar</button>
         </div>
       </div>
       <div id="pedLista"></div>
@@ -2119,7 +2450,7 @@ function renderPanelPedidos() {
 
 function atualizarPedidos(){
   const btn = event.target;
-  btn.textContent='⏳ Verificando...'; btn.disabled=true;
+  btn.textContent=' Verificando...'; btn.disabled=true;
   DB_REF.once('value').then(snap=>{
     if(snap&&snap.exists()){
       const fresh=snap.val(); normalizeDB(fresh); DB=fresh;
@@ -2127,10 +2458,10 @@ function atualizarPedidos(){
     }
     renderPedidos();
     btn.textContent='🔄 Atualizar Pedidos'; btn.disabled=false;
-    toast('✅ Pedidos atualizados!');
+    toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Pedidos atualizados!');
   }).catch(()=>{
     btn.textContent='🔄 Atualizar Pedidos'; btn.disabled=false;
-    toast('⚠️ Sem conexão','err');
+    toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Sem conexão','err');
   });
 }
 
@@ -2147,7 +2478,7 @@ function renderPedidos() {
   pedSemana.forEach(p=>{
     const u=Object.values(DB.users||{}).find(u=>u.login===p.userId||u.nome===p.nome);
     const setorId=u?.setor||'outros';
-    const s=SETORES_GOLDEN.find(x=>x.id===setorId)||{ico:'👤',nome:'Outros',id:'outros'};
+    const s=SETORES_GOLDEN.find(x=>x.id===setorId)||{ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',nome:'Outros',id:'outros'};
     if(!bySetor[setorId]) bySetor[setorId]={s, pedidos:[]};
     bySetor[setorId].pedidos.push({...p, _user:u});
   });
@@ -2164,7 +2495,7 @@ function renderPedidos() {
 
   // Pedidos por setor
   if(pedSemana.length){
-    html+=`<div style="font-size:13px;font-weight:800;color:var(--gold-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">✅ ${pedSemana.length} pedido${pedSemana.length!==1?'s':''} recebido${pedSemana.length!==1?'s':''}</div>`;
+    html+=`<div style="font-size:13px;font-weight:800;color:var(--gold-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> ${pedSemana.length} pedido${pedSemana.length!==1?'s':''} recebido${pedSemana.length!==1?'s':''}</div>`;
     Object.values(bySetor).forEach(({s,pedidos})=>{
       html+=`<div class="setor-section">
         <div class="setor-header">
@@ -2190,7 +2521,7 @@ function renderPedidos() {
               <div class="ped-detail-day">${dia.split('-')[0]}</div>
               <div class="ped-detail-food"><span>${EM(prato)}</span><span>${prato}</span></div>
             </div>`).join('')}
-          <button class="ped-copy-btn" onclick="copiarPedido('${p.userId}','${p.wk}')">📋 Copiar pedido de ${p.nome||p.userId}</button>
+          <button class="ped-copy-btn" onclick="copiarPedido('${p.userId}','${p.wk}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar pedido de ${p.nome||p.userId}</button>
         </div>`;
       });
       html+=`</div>`;
@@ -2200,16 +2531,16 @@ function renderPedidos() {
   // Pendentes
   if(pendentes.length){
     html+=`<div class="pendentes-section">
-      <div class="pendentes-header">⏳ ${pendentes.length} ainda não pediram</div>`;
+      <div class="pendentes-header"> ${pendentes.length} ainda não pediram</div>`;
     pendentes.forEach(u=>{
-      const s=SETORES_GOLDEN.find(x=>x.id===u.setor)||{ico:'👤',nome:u.cargo||'—'};
+      const s=SETORES_GOLDEN.find(x=>x.id===u.setor)||{ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',nome:u.cargo||'—'};
       html+=`<div class="pendente-row">
         <span style="font-size:22px">${s.ico}</span>
         <div>
           <div class="pendente-nome">${u.nome||u.login}</div>
           <div class="pendente-setor">${s.nome}</div>
         </div>
-        <button class="lembrar-btn" onclick="lembrarFuncionarioNotif('${(u.nome||u.login).replace(/'/g,"\\'")}','${u.login.replace(/'/g,"\\'")}')">🔔 Lembrar</button>
+        <button class="lembrar-btn" onclick="lembrarFuncionarioNotif('${(u.nome||u.login).replace(/'/g,"\\'")}','${u.login.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Lembrar</button>
       </div>`;
     });
     html+=`</div>`;
@@ -2230,36 +2561,36 @@ function togglePedDetail(id){
 function copiarPedido(userId, wk){
   const p=Object.values(DB.pedidos||{}).find(x=>x.userId===userId&&x.wk===wk);
   if(!p){toast('Pedido não encontrado','err');return;}
-  let txt=`✦ GOLDEN CARDÁPIO — SHOPPING CALHAU ✦\n`;
-  txt+=`👤 ${p.nome||p.userId} · ${p.cargo||''}\n`;
-  txt+=`📅 Semana de ${weekStr()}\n`;
+  let txt=` GOLDEN CARDÁPIO — SHOPPING CALHAU \n`;
+  txt+=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ${p.nome||p.userId} · ${p.cargo||''}\n`;
+  txt+=` Semana de ${weekStr()}\n`;
   txt+='─'.repeat(34)+'\n';
   Object.entries(p.dias||{}).forEach(([dia,prato])=>{
     if(!prato)return;
     txt+=`📌 ${dia}: ${EM(prato)} ${prato}\n`;
   });
-  navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiado!')).catch(()=>{
+  navigator.clipboard?.writeText(txt).then(()=>toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiado!')).catch(()=>{
     const ta=document.createElement('textarea');ta.value=txt;
     document.body.appendChild(ta);ta.select();document.execCommand('copy');
-    document.body.removeChild(ta);toast('📋 Copiado!');
+    document.body.removeChild(ta);toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiado!');
   });
 }
 
 function lembrarFuncionario(nome){
-  const msg=`Olá ${nome}! 👋%0ANão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
-  const msgPlain=`Olá ${nome}! 👋\nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`;
+  const msg=`Olá ${nome}! %0ANão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`;
+  const msgPlain=`Olá ${nome}! \nNão esqueça de registrar seu pedido do cardápio desta semana no app Golden Cardápio. <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`;
   // Abre WhatsApp direto no celular
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
   if(isMobile){
     window.open(`https://wa.me/?text=${msg}`, '_blank');
   } else {
     navigator.clipboard?.writeText(msgPlain)
-      .then(()=>toast(`📋 Mensagem copiada! Cole no WhatsApp de ${nome}`,'info'))
+      .then(()=>toast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Mensagem copiada! Cole no WhatsApp de ${nome}`,'info'))
       .catch(()=>{
         const ta=document.createElement('textarea');ta.value=msgPlain;
         document.body.appendChild(ta);ta.select();document.execCommand('copy');
         document.body.removeChild(ta);
-        toast(`📋 Mensagem copiada! Cole no WhatsApp de ${nome}`,'info');
+        toast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Mensagem copiada! Cole no WhatsApp de ${nome}`,'info');
       });
   }
 }
@@ -2267,7 +2598,7 @@ function lembrarFuncionario(nome){
 function limparSemana(){
   if(!confirm('Limpar todos os pedidos desta semana?'))return;
   const wk=weekKey(); Object.keys(DB.pedidos||{}).forEach(k=>{if(DB.pedidos[k].wk===wk)delete DB.pedidos[k];});
-  salvar();renderPedidos();toast('✅ Pedidos removidos');
+  salvar();renderPedidos();toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Pedidos removidos');
 }
 function exportarPedidosTxt(){
   const wk=weekKey(); let lista=Object.values(DB.pedidos||{});
@@ -2276,7 +2607,7 @@ function exportarPedidosTxt(){
   if(!lista.length){toast('Nenhum pedido para exportar','err');return;}
   let txt='═══════════════════════════════════\n  GOLDEN CARDÁPIO — SHOPPING CALHAU\n  Semana: '+weekStr()+'\n═══════════════════════════════════\n\n';
   lista.forEach(p=>{
-    txt+=`👤 ${p.nome} (${p.cargo})\n⏱ ${new Date(p.ts).toLocaleString('pt-BR')}\n`;
+    txt+=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ${p.nome} (${p.cargo})\n⏱ ${new Date(p.ts).toLocaleString('pt-BR')}\n`;
     Object.entries(p.dias||{}).forEach(([dia,prato])=>{if(!prato)return;txt+=`  📌 ${dia}: ${EM(prato)} ${prato}\n`;});
     txt+='───────────────────────────────────\n';
   });
@@ -2299,7 +2630,7 @@ function renderPanelStats() {
 
   c.innerHTML=`
     <div class="card">
-      <div class="card-title">🏆 Pratos Mais Pedidos</div>
+      <div class="card-title"> Pratos Mais Pedidos</div>
       <div class="card-sub">Ranking de popularidade geral de todos os pedidos</div>
       ${topPratos.length?topPratos.map(([prato,count],i)=>`
         <div class="top-prato-row">
@@ -2310,10 +2641,10 @@ function renderPanelStats() {
             <div class="top-bar-bg"><div class="top-bar-fill" style="width:${(count/maxCount)*100}%"></div></div>
           </div>
           <div class="top-count">${count}×</div>
-        </div>`).join(''):`<div class="empty-state"><div class="empty-state-ico">📊</div><div class="empty-state-txt">Nenhum pedido ainda</div></div>`}
+        </div>`).join(''):`<div class="empty-state"><div class="empty-state-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="empty-state-txt">Nenhum pedido ainda</div></div>`}
     </div>
     <div class="card">
-      <div class="card-title">📅 Participação por Dia</div>
+      <div class="card-title"> Participação por Dia</div>
       <div class="card-sub">Quantos escolheram cada dia esta semana</div>
       ${dias.map(([dia,info])=>{const n=pedSemana.filter(p=>p.dias&&p.dias[dia]).length;const pct=pedSemana.length?Math.round((n/pedSemana.length)*100):0;return`
         <div class="top-prato-row">
@@ -2331,12 +2662,107 @@ function renderPanelStats() {
 function renderPanelCardapio() {
   const c=document.getElementById('ap-cardapio'); if(!c)return;
   c.innerHTML=`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div>
+          <div class="card-title">Pratos Salvos</div>
+          <div class="card-sub">Clique em um prato para adicionar ao cardápio do dia</div>
+        </div>
+        <button class="btn btn-g btn-sm" onclick="novoSalvo()">+ Salvar prato</button>
+      </div>
+      <div class="ps-grid" id="pratosSalvosGrid"></div>
+    </div>
     <div class="card">
       <div class="card-title">Editar Cardápio</div>
       <div class="card-sub">Toque em um dia para expandir e editar os pratos</div>
       <div id="cardapioAccords"></div>
     </div>`;
+  renderPratosSalvos();
   renderAccords();
+}
+
+function renderPratosSalvos() {
+  const grid = document.getElementById('pratosSalvosGrid'); if(!grid)return;
+  const lista = DB.pratosSalvos || [];
+  const dias = Object.keys(DB.cardapio||{});
+  grid.innerHTML = lista.map((ps,i)=>{
+    const img = ps.foto || dishImgUrl(ps.nome);
+    return `<div class="ps-card" title="Clique para adicionar ao cardápio">
+      ${ps.foto
+        ? `<img class="ps-card-img" src="${ps.foto}" alt="${ps.nome}" onerror="this.style.display='none'">`
+        : `<div class="ps-card-img-ph">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="color:rgba(212,175,55,.2)"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+           </div>`
+      }
+      <div class="ps-card-name">${ps.nome}</div>
+      ${ps.categoria?`<div class="ps-card-tag">${ps.categoria}</div>`:''}
+      <button class="ps-card-del" onclick="event.stopPropagation();remSalvo(${i})" title="Remover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" width="11" height="11"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div onclick="escolherDiaParaSalvo(${i})" style="position:absolute;inset:0;z-index:1"></div>
+    </div>`;
+  }).join('') + `
+    <button class="ps-add-btn" onclick="novoSalvo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Novo prato
+    </button>`;
+}
+
+function novoSalvo() {
+  gmoOpen({
+    title:'Salvar Prato',
+    sub:'Adicione ao banco de pratos reutilizáveis',
+    fields:[
+      {id:'nome',label:'Nome do prato',placeholder:'Ex: Frango Grelhado com Legumes',required:true},
+      {id:'categoria',label:'Categoria (opcional)',placeholder:'Ex: Carne, Peixe, Vegetariano'},
+      {id:'foto',label:'URL da foto (opcional)',placeholder:'https://...'},
+    ],
+    confirm:'Salvar',
+    onSubmit(vals){
+      if(!vals.nome.trim()) return;
+      if(!DB.pratosSalvos) DB.pratosSalvos=[];
+      DB.pratosSalvos.push({nome:vals.nome.trim(), categoria:vals.categoria||'', foto:vals.foto||''});
+      salvar();
+      renderPratosSalvos();
+      toast('Prato salvo no banco!','ok');
+    }
+  });
+}
+
+function remSalvo(i) {
+  DB.pratosSalvos.splice(i,1);
+  salvar();
+  renderPratosSalvos();
+  toast('Prato removido','info');
+}
+
+function escolherDiaParaSalvo(i) {
+  const ps = DB.pratosSalvos[i];
+  if(!ps) return;
+  const dias = Object.keys(DB.cardapio||{});
+  gmoOpen({
+    title:`Adicionar ao Cardápio`,
+    sub: ps.nome,
+    fields:[{
+      id:'dia',label:'Escolha o dia',type:'select',
+      options: dias.map(d=>({value:d,label:d})),
+      required:true
+    }],
+    confirm:'Adicionar',
+    onSubmit(vals){
+      const dia = vals.dia;
+      if(!DB.cardapio[dia]) return;
+      DB.cardapio[dia].pratos.push(ps.nome);
+      if(!DB.cardapio[dia].emojis) DB.cardapio[dia].emojis=[];
+      DB.cardapio[dia].emojis.push('');
+      if(ps.foto){
+        if(!DB.cardapio[dia].fotos) DB.cardapio[dia].fotos=[];
+        DB.cardapio[dia].fotos.push(ps.foto);
+      }
+      salvar(); renderAccords();
+      toast(`"${ps.nome}" adicionado a ${dia}!`,'ok');
+    }
+  });
 }
 function renderAccords() {
   const c=document.getElementById('cardapioAccords'); if(!c)return;
@@ -2354,22 +2780,27 @@ function renderAccords() {
             const autoEm = EM(p);
             const displayEm = customEm || autoEm;
             const isCustom = !!customEm;
-            return `<div class="prato-item">
-              <button class="prato-em-btn" onclick="openEmojiPickerPrato('${dia.replace(/'/g,"\\'")}',${i})" title="Trocar emoji">
-                <span id="pem_${dia.replace(/[^a-z0-9]/gi,'_')}_${i}">${displayEm}</span>
-                <div class="em-hint">trocar</div>
-                <div class="em-auto-badge ${isCustom?'':'show'}" id="pem_badge_${dia.replace(/[^a-z0-9]/gi,'_')}_${i}" title="Automático"></div>
-              </button>
-              <input type="text" value="${p.replace(/"/g,'&quot;')}"
-                oninput="autoSuggestEm('${dia.replace(/'/g,"\\'")}',${i},this.value)"
-                onchange="editPrato('${dia.replace(/'/g,"\\'")}',${i},this.value)"
-                placeholder="Nome do prato">
-              <button class="prato-del" onclick="remPrato('${dia.replace(/'/g,"\\'")}',${i})">✕</button>
+            return `<div class="prato-item" style="flex-direction:column;align-items:stretch;gap:7px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <input type="text" value="${p.replace(/"/g,'&quot;')}"
+                  style="flex:1;background:transparent;border:none;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;outline:none"
+                  oninput="autoSuggestEm('${dia.replace(/'/g,"\'")}',${i},this.value)"
+                  onchange="editPrato('${dia.replace(/'/g,"\'")}',${i},this.value)"
+                  placeholder="Nome do prato">
+                <button class="prato-del" onclick="remPrato('${dia.replace(/'/g,"\'")}',${i})">×</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                ${info.fotos?.[i] ? `<img src="${info.fotos[i]}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;border:1px solid rgba(212,175,55,.3)">` : `<div style="width:36px;height:36px;border-radius:6px;border:1.5px dashed rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" style="color:rgba(212,175,55,.3)"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}
+                <input type="url" value="${info.fotos?.[i]||''}"
+                  style="flex:1;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.16);color:rgba(240,220,160,.65);font-size:11px;padding:6px 10px;border-radius:7px;outline:none;font-family:var(--font)"
+                  placeholder="URL da foto (cole link de imagem)"
+                  onchange="editPratoFoto('${dia.replace(/'/g,"\'")}',${i},this.value)">
+              </div>
             </div>`;
           }).join('')}
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
-          <button class="btn btn-g btn-sm" onclick="addPrato('${dia.replace(/'/g,"\\'")}')">+ Adicionar prato</button>
+          <button class="btn btn-g btn-sm" onclick="addPrato('${dia.replace(/'/g,"\\'")}')">Adicionar prato</button>
           <button class="btn btn-outline btn-sm" style="margin-left:auto;font-size:20px;gap:6px" onclick="openEmojiPicker('${dia.replace(/'/g,"\\'")}')">
             <span id="emojiBtn_${dia.replace(/[^a-z0-9]/gi,'_')}">${info.emoji}</span>
             <span style="font-size:12px;color:var(--muted)">Trocar emoji</span>
@@ -2383,6 +2814,15 @@ function toggleAccord(key){
   if(!body)return;
   const open=body.classList.toggle('open'); if(arr)arr.classList.toggle('open',open);
 }
+function editPratoFoto(dia,i,url){
+  if(!DB.cardapio[dia])return;
+  if(!DB.cardapio[dia].fotos) DB.cardapio[dia].fotos=[];
+  DB.cardapio[dia].fotos[i] = url || '';
+  salvar();
+  renderAccords();
+  if(url) toast('Foto do prato salva!','ok');
+}
+
 function editPrato(dia,i,v){
   if(!DB.cardapio[dia])return;
   DB.cardapio[dia].pratos[i]=v;
@@ -2390,7 +2830,7 @@ function editPrato(dia,i,v){
   if(!DB.cardapio[dia].emojis?.[i]){
     // already auto, nothing to do
   }
-  salvar(); toast('✅ Prato atualizado');
+  salvar(); toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Prato atualizado');
 }
 function autoSuggestEm(dia,i,v){
   // Só atualiza se não tem emoji customizado
@@ -2404,11 +2844,11 @@ function remPrato(dia,i){
   if(!DB.cardapio[dia])return;
   DB.cardapio[dia].pratos.splice(i,1);
   if(DB.cardapio[dia].emojis) DB.cardapio[dia].emojis.splice(i,1);
-  salvar(); renderAccords(); toast('🗑️ Prato removido');
+  salvar(); renderAccords(); toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Prato removido');
 }
 function editEmoji(dia,v){
   if(!DB.cardapio[dia])return;
-  DB.cardapio[dia].emoji=v; salvar(); toast('✅ Emoji atualizado');
+  DB.cardapio[dia].emoji=v; salvar(); toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Emoji atualizado');
 }
 function addPrato(dia){
   if(!DB.cardapio[dia])return;
@@ -2416,13 +2856,13 @@ function addPrato(dia){
     title:'Adicionar Prato',
     sub: dia,
     fields:[{id:'nome',label:'Nome do prato',placeholder:'Ex: Frango Grelhado',required:true}],
-    confirm:'✅ Adicionar',
+    confirm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Adicionar',
     onSubmit(vals){
       DB.cardapio[dia].pratos.push(vals.nome);
       // emoji auto via EM()
       if(!DB.cardapio[dia].emojis) DB.cardapio[dia].emojis=[];
       DB.cardapio[dia].emojis.push(''); // vazio = auto
-      salvar();renderAccords();toast('✅ Prato adicionado');
+      salvar();renderAccords();toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Prato adicionado');
     }
   });
 }
@@ -2441,14 +2881,14 @@ function openEmojiPickerPrato(dia, idx){
 // EQUIPE
 const SETORES_GOLDEN = [
   { id:'gerente',    ico:'👔', nome:'Gerente de Shopping',     desc:'Gestão geral do empreendimento' },
-  { id:'adm',        ico:'🏢', nome:'Assistente Administrativo', desc:'Suporte à administração' },
-  { id:'rh',         ico:'👥', nome:'Analista de RH',           desc:'Recrutamento e pessoal' },
+  { id:'adm',        ico:'', nome:'Assistente Administrativo', desc:'Suporte à administração' },
+  { id:'rh',         ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', nome:'Analista de RH',           desc:'Recrutamento e pessoal' },
   { id:'financeiro', ico:'💰', nome:'Analista Financeiro',      desc:'Contabilidade e tesouraria' },
   { id:'marketing',  ico:'📣', nome:'Analista de Marketing',    desc:'Campanhas e comunicação' },
   { id:'operacoes',  ico:'🏪', nome:'Coordenador de Operações', desc:'Supervisão do shopping' },
   { id:'sac',        ico:'📞', nome:'Atendente de SAC',         desc:'Atendimento ao cliente' },
   { id:'seguranca',  ico:'🔒', nome:'Agente de Segurança',      desc:'Vigilância e rondas' },
-  { id:'portaria',   ico:'🚪', nome:'Porteiro / Recepção',      desc:'Controle de entrada e acesso' },
+  { id:'portaria',   ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>', nome:'Porteiro / Recepção',      desc:'Controle de entrada e acesso' },
   { id:'manutencao', ico:'🔧', nome:'Técnico de Manutenção',    desc:'Elétrica, hidráulica e predial' },
   { id:'ti',         ico:'🖥️', nome:'Técnico de T.I.',          desc:'Sistemas e tecnologia' },
   { id:'servgerais', ico:'🧽', nome:'Serviços Gerais',          desc:'Limpeza, zeladoria e apoio' },
@@ -2461,23 +2901,23 @@ function renderPanelEquipe() {
   const users=Object.values(DB.users||{}).filter(u=>u.role!=='admin');
   c.innerHTML=`
     <div class="card">
-      <div class="card-title">👥 Equipe</div>
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Equipe</div>
       <div class="card-sub">${users.length} funcionário${users.length!==1?'s':''} · Entram só com o login</div>
-      <button class="btn btn-g" style="margin-bottom:18px;width:100%;justify-content:center;padding:14px;font-size:15px" onclick="addUser()">➕ Cadastrar Funcionário</button>
+      <button class="btn btn-g" style="margin-bottom:18px;width:100%;justify-content:center;padding:14px;font-size:15px" onclick="addUser()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Cadastrar Funcionário</button>
       <div class="user-grid" id="userGrid">
         ${users.length ? users.map(u=>{
-          const s = SETORES_GOLDEN.find(x=>x.id===u.setor)||{ico:'👤',nome:u.cargo||u.setor||'—',desc:''};
+          const s = SETORES_GOLDEN.find(x=>x.id===u.setor)||{ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',nome:u.cargo||u.setor||'—',desc:''};
           return `<div class="user-card">
             <div style="font-size:40px;margin-bottom:10px;line-height:1;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4))">${s.ico}</div>
             <div style="font-size:18px;font-weight:800;color:var(--gold-1);margin-bottom:4px">${u.login}</div>
             <div style="font-size:12px;color:var(--gold-3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">${s.nome}</div>
             <div style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:14px;line-height:1.4">${s.desc||''}</div>
             <div style="display:flex;gap:6px;justify-content:center">
-              <button class="btn btn-outline btn-sm" onclick="editUser('${u.login.replace(/'/g,"\\'")}')">✏️ Setor</button>
-              <button class="btn btn-danger btn-sm" onclick="remUser('${u.login.replace(/'/g,"\\'")}')">🗑️</button>
+              <button class="btn btn-outline btn-sm" onclick="editUser('${u.login.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Setor</button>
+              <button class="btn btn-danger btn-sm" onclick="remUser('${u.login.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
             </div>
           </div>`;
-        }).join('') : `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-ico">👥</div><div class="empty-state-txt">Nenhum funcionário ainda</div></div>`}
+        }).join('') : `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="empty-state-txt">Nenhum funcionário ainda</div></div>`}
       </div>
     </div>`;
 }
@@ -2525,15 +2965,15 @@ function editUser(login){
 
 function remUser(login){
   const u=DB.users[login]; if(!u)return;
-  const s=SETORES_GOLDEN.find(x=>x.id===u.setor)||{ico:'👤',nome:u.login};
+  const s=SETORES_GOLDEN.find(x=>x.id===u.setor)||{ico:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',nome:u.login};
   gmoOpen({
     title:'Remover Funcionário',
     sub:`Remover "${u.login}" (${s.nome})? Esta ação não pode ser desfeita.`,
     fields:[],
-    confirm:'🗑️ Sim, remover',
+    confirm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Sim, remover',
     danger:true,
     onSubmit(){
-      delete DB.users[login]; salvar(); renderPanelEquipe(); toast('🗑️ Funcionário removido');
+      delete DB.users[login]; salvar(); renderPanelEquipe(); toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Funcionário removido');
     }
   });
 }
@@ -2556,7 +2996,7 @@ function renderSetorGrid(){
   const el = document.getElementById('setorGrid');
   el.innerHTML = SETORES_GOLDEN.map(s=>`
     <div class="setor-card ${_spickerSetor===s.id?'selected':''}" onclick="selectSetor('${s.id}')">
-      <div class="setor-check">✓</div>
+      <div class="setor-check"></div>
       <div class="setor-ico">${s.ico}</div>
       <div class="setor-info">
         <div class="setor-nome">${s.nome}</div>
@@ -2583,12 +3023,12 @@ function spickerConfirm(){
       pin:'0001', role:'user', photo:null
     };
     salvar(); renderPanelEquipe();
-    toast(`✅ ${_spickerNomeVal} cadastrado em ${s.ico} ${s.nome}`);
+    toast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> ${_spickerNomeVal} cadastrado em ${s.ico} ${s.nome}`);
   } else if(_spickerMode==='edit'){
     const u = DB.users[_spickerLogin]; if(!u) return;
     u.setor = _spickerSetor; u.cargo = s.nome;
     salvar(); renderPanelEquipe();
-    toast(`✅ Setor atualizado para ${s.ico} ${s.nome}`);
+    toast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Setor atualizado para ${s.ico} ${s.nome}`);
   }
   spickerClose();
 }
@@ -2608,8 +3048,15 @@ function gmoOpen({title, sub='', fields=[], confirm='Confirmar', danger=false, o
   btn.className = 'gmo-confirm' + (danger?' danger':'');
 
   const fieldsEl = document.getElementById('gmoFields');
-  fieldsEl.innerHTML = fields.map(f=>`
-    <div class="gmo-field">
+  fieldsEl.innerHTML = fields.map(f=>{
+    if(f.type === 'select'){
+      const opts = (f.options||[]).map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+      return `<div class="gmo-field">
+        <label for="gf_${f.id}">${f.label}</label>
+        <select id="gf_${f.id}" style="width:100%;background:rgba(212,175,55,.04);border:1.5px solid rgba(212,175,55,.18);color:var(--text);padding:12px 14px;border-radius:var(--rsm);font-size:14px;font-family:var(--font);outline:none;cursor:pointer">${opts}</select>
+      </div>`;
+    }
+    return `<div class="gmo-field">
       <label for="gf_${f.id}">${f.label}</label>
       <input id="gf_${f.id}" type="text" placeholder="${f.placeholder||''}"
         value="${f.value||''}"
@@ -2617,7 +3064,8 @@ function gmoOpen({title, sub='', fields=[], confirm='Confirmar', danger=false, o
         ${f.inputmode?`inputmode="${f.inputmode}"`:''}
         autocomplete="off" autocapitalize="none" autocorrect="off"
         ${f.required?'required':''}>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   document.getElementById('gmoOverlay').classList.add('open');
   // Focus first field + Enter to submit
@@ -2637,13 +3085,13 @@ function gmoCancel(){
 
 function gmoShowErr(msg){
   const el = document.getElementById('gmoErr');
-  el.textContent = '⚠️ ' + msg;
+  el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ' + msg;
   el.className = 'gmo-err on';
 }
 
 function gmoSubmit(){
   const fieldsEl = document.getElementById('gmoFields');
-  const inputs = fieldsEl.querySelectorAll('input');
+  const inputs = fieldsEl.querySelectorAll('input,select');
   const vals = {};
   for(const inp of inputs){
     const key = inp.id.replace('gf_','');
@@ -2673,7 +3121,7 @@ const EMOJI_CATS = [
   { label:'🍰 Sobremesa', emojis:['🍰','🎂','🧁','🍮','🍭','🍬','🍫','🍩','🍪','🍦','🍨','🍧','🍡','🍢','🍣'] },
   { label:'🥤 Bebidas',   emojis:['🥤','🍵','☕','🧃','🍹','🧉','🥛','🍶','🍺','🫖','🧊','🍷'] },
   { label:'🌤️ Clima',     emojis:['🌤️','🌊','🌿','🍃','🔥','⭐','☀️','🌙','❄️','🌈','⚡','🌸','🍀','🌺','🌻'] },
-  { label:'✨ Outros',    emojis:['✨','🎯','🏆','💎','👑','⚜️','🔮','🎪','🎭','🎨','🎬','🎵','🎶','🌟','💫'] },
+  { label:'✨ Outros',    emojis:['✨','🎯','','💎','👑','','🔮','🎪','🎭','🎨','🎬','🎵','🎶','🌟','💫'] },
 ];
 
 let _epickerDia = null;
@@ -2738,7 +3186,7 @@ function selectEmoji(emoji) {
   if (btn) btn.textContent = emoji;
   const accHd = document.querySelector(`#acc-${key} .accord-hd-left span`);
   if (accHd) accHd.textContent = emoji;
-  vibrate(20); epickerClose(); toast('✅ Emoji do dia atualizado!');
+  vibrate(20); epickerClose(); toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Emoji do dia atualizado!');
 }
 
 function selectEmojiPrato(emoji, dia, idx) {
@@ -2754,7 +3202,7 @@ function selectEmojiPrato(emoji, dia, idx) {
   if(el) el.textContent = display;
   if(badge) badge.classList.toggle('show', !emoji);
   vibrate(20); epickerClose();
-  toast(emoji ? '✅ Emoji definido!' : '🔄 Voltou ao automático');
+  toast(emoji ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" style="color:#D4AF37"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg> Emoji definido!' : '🔄 Voltou ao automático');
 }
 
 // ═══════════════════════════════════════
@@ -2770,8 +3218,8 @@ function initFCM() {
     // Notificação quando o app está aberto
     _fcmMessaging.onMessage(payload => {
       const { title, body } = payload.notification || {};
-      mostrarNotifLocal(title || '🍽️ Golden Cardápio', body || 'Faça seu pedido!');
-      toast('🔔 ' + (body || 'Novo lembrete!'), 'info');
+      mostrarNotifLocal(title || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg> Golden Cardápio', body || 'Faça seu pedido!');
+      toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> ' + (body || 'Novo lembrete!'), 'info');
     });
   } catch(e) { console.log('FCM indisponível:', e); }
 }
@@ -2791,43 +3239,37 @@ async function setupNotificacoes() {
 
 function showNotifBanner() {
   document.getElementById('notifBanner')?.remove();
-  const banner = document.createElement('div');
-  banner.id = 'notifBanner';
-  banner.innerHTML = `
-    <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-      width:min(380px,92vw);background:var(--bg-1);border:1px solid rgba(200,160,32,.35);
-      border-radius:18px;padding:18px 20px;z-index:8000;
-      box-shadow:0 8px 28px rgba(0,0,0,.6);animation:pgIn .4s ease;font-family:var(--font)">
-      <div style="display:flex;align-items:flex-start;gap:14px">
-        <span style="font-size:32px;line-height:1">🔔</span>
-        <div style="flex:1">
-          <div style="font-size:16px;font-weight:800;color:var(--gold-1);margin-bottom:4px">Ativar notificações</div>
-          <div style="font-size:13px;color:var(--muted);font-weight:500;line-height:1.5">
-            Receba lembretes mesmo com o app fechado quando ainda não tiver feito o pedido da semana.
-          </div>
-          <div style="display:flex;gap:8px;margin-top:14px">
-            <button onclick="ativarNotificacoes()" style="flex:1;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));
-              border:none;border-radius:10px;color:var(--bg-0);font-size:14px;font-weight:800;padding:12px;cursor:pointer;font-family:var(--font)">
-              🔔 Ativar agora</button>
-            <button onclick="document.getElementById('notifBanner').remove()" style="flex:1;background:var(--bg-3);
-              border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;padding:12px;cursor:pointer;font-family:var(--font)">
-              Agora não</button>
-          </div>
-        </div>
+  const el = document.createElement('div');
+  el.id = 'notifBanner';
+  el.className = 'perm-card';
+  el.innerHTML = `
+    <div class="perm-card-icon-wrap">
+      <div class="perm-card-icon-ring" style="width:88px;height:88px"></div>
+      <div class="perm-card-icon-ring" style="width:110px;height:110px"></div>
+      <div class="perm-card-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+    </div>
+    <div class="perm-card-body">
+      <div class="perm-card-title">Notificações</div>
+      <div class="perm-card-desc">
+        Receba lembretes automáticos quando ainda não tiver feito o pedido da semana — mesmo com o app fechado.
+      </div>
+      <div class="perm-card-actions">
+        <button class="perm-btn-yes" onclick="ativarNotificacoes()">Ativar agora</button>
+        <button class="perm-btn-no" onclick="document.getElementById('notifBanner').remove()">Agora não</button>
       </div>
     </div>`;
-  document.body.appendChild(banner);
-  setTimeout(()=>banner.remove(), 15000);
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 16000);
 }
 
 async function ativarNotificacoes() {
   document.getElementById('notifBanner')?.remove();
   const perm = await Notification.requestPermission();
   if (perm === 'granted') {
-    toast('🔔 Notificações ativadas!', 'ok');
+    toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notificações ativadas!', 'ok');
     mostrarNotifLocal(
-      '✦ Golden Shopping Calhau',
-      `Olá ${CU?.nome?.split(' ')[0]||''}! Vou te lembrar do cardápio toda semana. 🍽️`
+      ' Golden Shopping Calhau',
+      `Olá ${CU?.nome?.split(' ')[0]||''}! Vou te lembrar do cardápio toda semana. <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`
     );
     await registrarTokenFCM();
     agendarVerificacaoSemanal();
@@ -2839,36 +3281,30 @@ async function ativarNotificacoes() {
 }
 
 function perguntarVoz() {
-  if (voiceEnabled) return; // já está ativa
+  if (voiceEnabled) return;
   document.getElementById('vozBanner')?.remove();
-  const b = document.createElement('div');
-  b.id = 'vozBanner';
   const nome = CU?.nome?.split(' ')[0] || '';
-  b.innerHTML = `
-    <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-      width:min(380px,92vw);background:var(--bg-1);border:1px solid var(--border-2);
-      border-radius:18px;padding:18px 20px;z-index:8000;
-      box-shadow:0 8px 28px rgba(0,0,0,.6);animation:pgIn .4s ease;font-family:var(--font)">
-      <div style="display:flex;align-items:flex-start;gap:14px">
-        <span style="font-size:32px;line-height:1">🔊</span>
-        <div style="flex:1">
-          <div style="font-size:16px;font-weight:800;color:var(--gold-1);margin-bottom:4px">Assistente de voz</div>
-          <div style="font-size:13px;color:var(--muted);font-weight:500;line-height:1.5">
-            ${nome}, quer ativar a voz inteligente? Ela vai te guiar pelo cardápio com áudio.
-          </div>
-          <div style="display:flex;gap:8px;margin-top:14px">
-            <button onclick="ativarVozBanner()" style="flex:1;background:linear-gradient(135deg,var(--gold-4),var(--gold-2));
-              border:none;border-radius:10px;color:var(--bg-0);font-size:14px;font-weight:800;padding:12px;cursor:pointer;font-family:var(--font)">
-              🔊 Ativar voz</button>
-            <button onclick="document.getElementById('vozBanner').remove()" style="flex:1;background:var(--bg-3);
-              border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;padding:12px;cursor:pointer;font-family:var(--font)">
-              Não obrigado</button>
-          </div>
-        </div>
+  const el = document.createElement('div');
+  el.id = 'vozBanner';
+  el.className = 'perm-card';
+  el.innerHTML = `
+    <div class="perm-card-icon-wrap">
+      <div class="perm-card-icon-ring" style="width:88px;height:88px"></div>
+      <div class="perm-card-icon-ring" style="width:110px;height:110px"></div>
+      <div class="perm-card-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
+    </div>
+    <div class="perm-card-body">
+      <div class="perm-card-title">Assistente de Voz</div>
+      <div class="perm-card-desc">
+        ${nome ? nome + ', ativa' : 'Ative'} a voz inteligente para ser guiado pelo cardápio com áudio durante a semana.
+      </div>
+      <div class="perm-card-actions">
+        <button class="perm-btn-yes" onclick="ativarVozBanner()">Ativar voz</button>
+        <button class="perm-btn-no" onclick="document.getElementById('vozBanner').remove()">Não, obrigado</button>
       </div>
     </div>`;
-  document.body.appendChild(b);
-  setTimeout(()=>b.remove(), 12000);
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 14000);
 }
 
 function ativarVozBanner() {
@@ -2878,7 +3314,7 @@ function ativarVozBanner() {
   updateVoiceUI();
   const nome = CU?.nome?.split(' ')[0] || '';
   speak(`Olá ${nome}! Voz ativada. Estou aqui para te ajudar no cardápio do Golden Shopping Calhau.`, true);
-  toast('🔊 Voz ativada!', 'ok');
+  toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Voz ativada!', 'ok');
 }
 
 async function registrarTokenFCM() {
@@ -2915,9 +3351,9 @@ function agendarVerificacaoSemanal() {
   if (lembrCount >= 3) return;
 
   const msgs = [
-    [`🍽️ Golden Shopping Calhau`,    `Olá ${CU.nome?.split(' ')[0]}! Você ainda não fez seu pedido desta semana. Toque para escolher! 🍽️`],
-    [`⏰ Golden Cardápio — Lembrete`, `${CU.nome?.split(' ')[0]}, seu pedido desta semana ainda está em aberto! 🍽️`],
-    [`🔔 Último lembrete — Golden`,   `${CU.nome?.split(' ')[0]}, ainda dá tempo de fazer seu pedido desta semana! 😊🍽️`],
+    [`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg> Golden Shopping Calhau`,    `Olá ${CU.nome?.split(' ')[0]}! Você ainda não fez seu pedido desta semana. Toque para escolher! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`],
+    [`⏰ Golden Cardápio — Lembrete`, `${CU.nome?.split(' ')[0]}, seu pedido desta semana ainda está em aberto! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`],
+    [`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Último lembrete — Golden`,   `${CU.nome?.split(' ')[0]}, ainda dá tempo de fazer seu pedido desta semana! 😊<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`],
   ];
 
   // Notifica se app abre mas usuário não está no cardápio
@@ -2935,11 +3371,11 @@ function agendarVerificacaoSemanal() {
   const alarms = [];
 
   // Lembrete 1: 6h depois
-  if (lembrCount < 1) alarms.push({ fireAt: now + 6*60*60*1000,  title:'🍽️ Golden Shopping Calhau', body:`${nome}, você ainda não fez seu pedido desta semana!` });
+  if (lembrCount < 1) alarms.push({ fireAt: now + 6*60*60*1000,  title:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg> Golden Shopping Calhau', body:`${nome}, você ainda não fez seu pedido desta semana!` });
   // Lembrete 2: 1 dia depois
-  if (lembrCount < 2) alarms.push({ fireAt: now + 24*60*60*1000, title:'⏰ Golden Cardápio',          body:`${nome}, seu pedido desta semana ainda está em aberto! 🍽️` });
+  if (lembrCount < 2) alarms.push({ fireAt: now + 24*60*60*1000, title:'⏰ Golden Cardápio',          body:`${nome}, seu pedido desta semana ainda está em aberto! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>` });
   // Lembrete 3: 2 dias depois
-  if (lembrCount < 3) alarms.push({ fireAt: now + 48*60*60*1000, title:'🔔 Último lembrete — Golden', body:`${nome}, última chance de fazer seu pedido desta semana! 😊` });
+  if (lembrCount < 3) alarms.push({ fireAt: now + 48*60*60*1000, title:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Último lembrete — Golden', body:`${nome}, última chance de fazer seu pedido desta semana! 😊` });
 
   if (alarms.length) {
     swMessage({ type: 'SAVE_SESSION', session: null, schedule: { cancelled: false, alarms } });
@@ -2974,18 +3410,18 @@ async function lembrarFuncionarioNotif(nome, login) {
     } catch(e) {}
     // Também salva no Firebase para quando o app abrir
     DB_REF.child('lembretes').child(key).set({
-      titulo: '🍽️ Golden Cardápio — Shopping Calhau',
-      corpo: `Olá ${nome}! Você ainda não fez seu pedido desta semana. Acesse o app e escolha seu almoço! 🍽️`,
+      titulo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg> Golden Cardápio — Shopping Calhau',
+      corpo: `Olá ${nome}! Você ainda não fez seu pedido desta semana. Acesse o app e escolha seu almoço! <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`,
       ts: Date.now()
     });
   }
 
-  toast(fcmSent ? `🔔 Notificação enviada para ${nome}!` : `📋 Lembrete salvo para ${nome}`, 'ok');
+  toast(fcmSent ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notificação enviada para ${nome}!` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Lembrete salvo para ${nome}`, 'ok');
 
   // No celular do admin abre WhatsApp como backup
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
   if (isMobile) {
-    const msgWA = encodeURIComponent(`Olá ${nome}! 👋\nNão esqueça de fazer seu pedido do cardápio desta semana no app Golden Cardápio. 🍽️`);
+    const msgWA = encodeURIComponent(`Olá ${nome}! \nNão esqueça de fazer seu pedido do cardápio desta semana no app Golden Cardápio. <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>`);
     window.open(`https://wa.me/?text=${msgWA}`, '_blank');
   }
 }
@@ -3007,7 +3443,7 @@ function verificarLembretesFirebase() {
     const l = snap.val(); if (!l) return;
     const diff = Date.now() - (l.ts || 0);
     if (diff < 24 * 60 * 60 * 1000) {
-      mostrarNotifLocal(l.titulo || '🍽️ Golden Cardápio', l.corpo || 'Faça seu pedido!');
+      mostrarNotifLocal(l.titulo || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg> Golden Cardápio', l.corpo || 'Faça seu pedido!');
     }
     DB_REF.child('lembretes').child(key).remove();
   });
