@@ -1,0 +1,74 @@
+{
+  "name": "Golden Cardápio",
+  "short_name": "Golden",
+  "description": "Cardápio digital do Golden Shopping Calhau · São Luís MA",
+  "start_url": "/Golden/index.html",
+  "display": "standalone",
+  "background_color": "#060504",
+  "theme_color": "#060504",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "scope": "/Golden/",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "food",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Fazer Pedido",
+      "short_name": "Pedido",
+      "description": "Abrir cardápio da semana",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
