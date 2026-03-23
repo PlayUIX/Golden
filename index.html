@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Golden Cardápio</title>
+    <link rel="manifest" id="dynamic-manifest">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: white;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: black;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .app-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+        }
+        .screen {
+            width: 100%;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .logo-area {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo-img {
+            max-width: 260px;
+            width: 100%;
+            height: auto;
+            display: inline-block;
+        }
+        .card-form {
+            background: white;
+            padding: 24px 16px;
+        }
+        .input-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            background: white;
+            color: black;
+            border-radius: 12px;
+        }
+        .btn-primary, .btn-next, .btn-whatsapp, .btn-reset {
+            width: 100%;
+            border: none;
+            padding: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 60px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .btn-primary, .btn-next {
+            background: black;
+            color: white;
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        .btn-reset {
+            background: #333;
+            color: white;
+        }
+        /* Botão de confirmação: centralizado, aparece apenas quando necessário */
+        .btn-next {
+            display: none;
+            margin: 24px auto;
+            width: 80%;
+            max-width: 280px;
+            text-align: center;
+        }
+        .day-header-wrapper {
+            text-align: center;
+        }
+        .day-header {
+            font-size: 1.2rem;
+            font-weight: 500;
+            border-bottom: 1px solid #eaeaea;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+        .grid-dishes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0 32px;
+        }
+        .dish-card {
+            aspect-ratio: 1 / 1;
+            background: #f8f8f8;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 12px;
+            cursor: pointer;
+        }
+        .dish-card.selected {
+            background: #d0d0d0;
+            border: 3px solid #000000;
+        }
+        .progress-indicator {
+            font-size: 0.85rem;
+            text-align: center;
+            margin: 10px 0;
+            color: #444;
+        }
+        .success-card {
+            background: white;
+            padding: 24px 16px;
+            text-align: center;
+        }
+        .summary-box {
+            background: #f5f5f5;
+            border-radius: 24px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #aaa;
+        }
+        @media (max-width: 480px) {
+            .dish-card { font-size: 1rem; }
+            .btn-next { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- LOGO -->
+    <div class="logo-area">
+        <img class="logo-img" src="logo/logo.png" alt="Golden Shopping Calhau" onerror="this.style.display='none'">
+    </div>
+
+    <div id="registerScreen" class="screen">
+        <div class="card-form">
+            <div class="input-group">
+                <label>Nome completo</label>
+                <input type="text" id="fullNameInput" placeholder="Ex: Ana Silva">
+            </div>
+            <div class="input-group">
+                <label>Setor / Cargo</label>
+                <select id="sectorSelect">
+                    <option value="">Selecione...</option>
+                    <option>Administrativo</option><option>Financeiro</option><option>RH</option>
+                    <option>TI</option><option>Marketing</option><option>Segurança</option>
+                    <option>Portaria</option><option>Limpeza</option><option>Serviços Gerais</option>
+                    <option>Manutenção</option><option>Recepção</option><option>Atendimento</option>
+                    <option>Operacional</option><option>Gerência</option><option>Diretoria</option>
+                    <option>Outros</option>
+                </select>
+            </div>
+            <button class="btn-primary" id="startBtn">Iniciar pedido</button>
+        </div>
+    </div>
+
+    <div id="menuScreen" class="screen hidden">
+        <div class="day-header-wrapper">
+            <div class="day-header" id="dayNameDisplay"></div>
+            <div class="progress-indicator" id="progressText"></div>
+        </div>
+        <div class="grid-dishes" id="dishesGrid"></div>
+        <button class="btn-next" id="confirmAdvanceBtn">Confirmar e Avançar →</button>
+    </div>
+
+    <div id="successScreen" class="screen hidden">
+        <div class="success-card">
+            <div class="form-title" style="font-size:1.6rem; margin-bottom:16px;">Pedido finalizado</div>
+            <div id="summaryContainer" class="summary-box"></div>
+            <button class="btn-whatsapp" id="whatsappShareBtn">Enviar resumo via WhatsApp</button>
+            <button class="btn-reset" id="newOrderBtn">Novo Pedido</button>
+        </div>
+    </div>
+</div>
+<footer>Golden Shopping Calhau • Sistema interno</footer>
+
+<script>
+    const MENU_WEEK = [
+        { dayName: "Segunda-feira", dishes: ["Filé de Frango","Bife à Parmegiana","Peixe ao Molho","Macarronada","Salada Tropical"] },
+        { dayName: "Terça-feira",   dishes: ["Strogonoff de Carne","Frango Assado","Lasanha Bolonhesa","Omelete Especial","Salada Caesar"] },
+        { dayName: "Quarta-feira",  dishes: ["Feijoada Light","Peixe Grelhado","Carne de Panela","Nhoque ao Sugo","Tofu Grelhado"] },
+        { dayName: "Quinta-feira",  dishes: ["Costela ao Forno","Frango à Milanesa","Risoto de Camarão","Espaguete ao Pesto","Hambúrguer Artesanal"] },
+        { dayName: "Sexta-feira",   dishes: ["Bacalhau Dourado","Filé Mignon","Moqueca Baiana","Pizza Integral","Salmão Grelhado"] },
+        { dayName: "Sábado",        dishes: ["Churrasco Misto","Fraldinha","Frango Caipira","Macarrão com Camarão","Risoto de Cogumelos"] },
+        { dayName: "Domingo",       dishes: ["Galinhada","Lombo Assado","Tutu à Mineira","Polenta Cremosa","Salpicão Especial"] }
+    ];
+
+    let currentUser = { name: "", sector: "" };
+    let weeklySelections = new Array(7).fill(null);
+    let currentDayIndex = 0;
+    let selectedDishForCurrentDay = null;
+    let orderCompleted = false;
+
+    const registerScreen = document.getElementById('registerScreen');
+    const menuScreen = document.getElementById('menuScreen');
+    const successScreen = document.getElementById('successScreen');
+    const fullNameInput = document.getElementById('fullNameInput');
+    const sectorSelect = document.getElementById('sectorSelect');
+    const startBtn = document.getElementById('startBtn');
+    const dayNameDisplay = document.getElementById('dayNameDisplay');
+    const progressText = document.getElementById('progressText');
+    const dishesGrid = document.getElementById('dishesGrid');
+    const confirmAdvanceBtn = document.getElementById('confirmAdvanceBtn');
+    const summaryContainer = document.getElementById('summaryContainer');
+    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+    const newOrderBtn = document.getElementById('newOrderBtn');
+
+    function speakText(text) {
+        if (!('speechSynthesis' in window)) return;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('golden_cardapio', JSON.stringify({
+            user: currentUser,
+            selections: weeklySelections,
+            completed: orderCompleted
+        }));
+    }
+
+    function loadFromLocalStorage() {
+        const raw = localStorage.getItem('golden_cardapio');
+        if (!raw) return false;
+        try {
+            const data = JSON.parse(raw);
+            if (data.user?.name && data.user?.sector) {
+                currentUser = data.user;
+                weeklySelections = data.selections || new Array(7).fill(null);
+                orderCompleted = data.completed === true;
+                if (weeklySelections.length < 7) weeklySelections.push(...new Array(7 - weeklySelections.length).fill(null));
+                return true;
+            }
+        } catch(e) {}
+        return false;
+    }
+
+    function isOrderComplete() {
+        return weeklySelections.every(c => c && c !== "");
+    }
+
+    function resetWeekly() {
+        weeklySelections = new Array(7).fill(null);
+        orderCompleted = false;
+        currentDayIndex = 0;
+        selectedDishForCurrentDay = null;
+        saveToLocalStorage();
+    }
+
+    function navigateToCorrectScreen() {
+        if (!currentUser.name || !currentUser.sector) {
+            registerScreen.classList.remove('hidden');
+            menuScreen.classList.add('hidden');
+            successScreen.classList.add('hidden');
+            return;
+        }
+        if (orderCompleted || isOrderComplete()) {
+            orderCompleted = true;
+            saveToLocalStorage();
+            renderSuccessScreen();
+            registerScreen.classList.add('hidden');
+            menuScreen.classList.add('hidden');
+            successScreen.classList.remove('hidden');
+            return;
+        }
+        const firstMissing = weeklySelections.findIndex(c => !c);
+        if (firstMissing === -1) {
+            orderCompleted = true;
+            saveToLocalStorage();
+            renderSuccessScreen();
+            registerScreen.classList.add('hidden');
+            menuScreen.classList.add('hidden');
+            successScreen.classList.remove('hidden');
+            return;
+        }
+        currentDayIndex = firstMissing;
+        selectedDishForCurrentDay = null;
+        renderCurrentDayMenu();
+        registerScreen.classList.add('hidden');
+        successScreen.classList.add('hidden');
+        menuScreen.classList.remove('hidden');
+    }
+
+    function showConfirmButton(show) {
+        confirmAdvanceBtn.style.display = show ? 'block' : 'none';
+    }
+
+    function renderCurrentDayMenu() {
+        const dayData = MENU_WEEK[currentDayIndex];
+        dayNameDisplay.innerText = dayData.dayName;
+        progressText.innerText = `Dia ${currentDayIndex+1} de 7 • ${dayData.dayName}`;
+        dishesGrid.innerHTML = '';
+        
+        const savedDish = weeklySelections[currentDayIndex];
+        let hasSelection = false;
+        
+        dayData.dishes.forEach(dish => {
+            const card = document.createElement('div');
+            card.className = 'dish-card';
+            card.innerText = dish;
+            if (savedDish === dish) {
+                card.classList.add('selected');
+                selectedDishForCurrentDay = dish;
+                hasSelection = true;
+            }
+            card.addEventListener('click', () => {
+                speakText(dish);
+                document.querySelectorAll('.dish-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedDishForCurrentDay = dish;
+                showConfirmButton(true);
+            });
+            dishesGrid.appendChild(card);
+        });
+        
+        if (hasSelection) {
+            showConfirmButton(true);
+        } else {
+            showConfirmButton(false);
+            selectedDishForCurrentDay = null;
+        }
+    }
+
+    function confirmAndAdvance() {
+        if (!selectedDishForCurrentDay) {
+            alert("Selecione um prato antes de continuar.");
+            return;
+        }
+        weeklySelections[currentDayIndex] = selectedDishForCurrentDay;
+        saveToLocalStorage();
+        if (currentDayIndex + 1 < 7) {
+            currentDayIndex++;
+            selectedDishForCurrentDay = null;
+            renderCurrentDayMenu();
+        } else {
+            orderCompleted = true;
+            saveToLocalStorage();
+            navigateToCorrectScreen();
+        }
+    }
+
+    function renderSuccessScreen() {
+        let html = `<strong>${currentUser.name}</strong> • ${currentUser.sector}<br><br>`;
+        for (let i = 0; i < MENU_WEEK.length; i++) {
+            html += `<div class="summary-line"><strong>${MENU_WEEK[i].dayName}:</strong> ${weeklySelections[i] || "—"}</div>`;
+        }
+        summaryContainer.innerHTML = html;
+
+        whatsappShareBtn.onclick = () => {
+            let msg = `*GOLDEN CARDAPIO*\nFuncionario: ${currentUser.name}\nSetor: ${currentUser.sector}\n------------------------\n`;
+            for (let i = 0; i < MENU_WEEK.length; i++) {
+                msg += `${MENU_WEEK[i].dayName}: ${weeklySelections[i] || "nao selecionado"}\n`;
+            }
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+    }
+
+    function registerUser() {
+        const nome = fullNameInput.value.trim();
+        const setor = sectorSelect.value;
+        if (!nome || !setor || setor === "") {
+            alert("Preencha nome e setor.");
+            return;
+        }
+        currentUser = { name: nome, sector: setor };
+        resetWeekly();
+        saveToLocalStorage();
+        navigateToCorrectScreen();
+    }
+
+    function handleNewOrder() {
+        if (confirm("Deseja fazer um novo pedido? O atual será substituído.")) {
+            resetWeekly();
+            navigateToCorrectScreen();
+        }
+    }
+
+    // PWA + Service Worker (offline)
+    function setupPWA() {
+        const manifestObj = {
+            name: "Golden Cardápio",
+            short_name: "Cardápio",
+            start_url: ".",
+            display: "standalone",
+            theme_color: "#ffffff",
+            background_color: "#ffffff",
+            icons: [{ src: "logo/logo.png", sizes: "192x192", type: "image/png" }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], {type: 'application/json'});
+        const manifestLink = document.getElementById('dynamic-manifest');
+        manifestLink.setAttribute('href', URL.createObjectURL(manifestBlob));
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'golden-cardapio-v5';
+                self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
+                self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+            `;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.warn);
+        }
+    }
+
+    function init() {
+        setupPWA();
+        if (loadFromLocalStorage() && currentUser.name) {
+            if (isOrderComplete()) orderCompleted = true;
+            navigateToCorrectScreen();
+        } else {
+            registerScreen.classList.remove('hidden');
+        }
+        startBtn.addEventListener('click', registerUser);
+        confirmAdvanceBtn.addEventListener('click', confirmAndAdvance);
+        newOrderBtn.addEventListener('click', handleNewOrder);
+    }
+
+    init();
+</script>
+</body>
+</html>
