@@ -1,0 +1,1 @@
+console.log('Gerando QR Code...');
