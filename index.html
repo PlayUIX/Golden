@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Cardápio Pro</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" type="image/png" href="./imagens/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════
+         TELA DE LOADING
+    ═══════════════════════════════════════════════ -->
+    <div id="loading-screen">
+        <div class="slogan-container">
+            <span id="typing-text"></span>
+            <span class="cursor">|</span>
+        </div>
+        <div class="logo-container" id="logo-container" style="display:none;">
+            <img src="./imagens/logo.png" alt="Logo Golden" class="main-logo"
+                 onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';">
+            <div class="logo-placeholder" id="logo-fallback" style="display:none;">
+                <i class="fas fa-diamond"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         TELA DE CADASTRO
+    ═══════════════════════════════════════════════ -->
+    <section id="tela-cadastro" class="container hidden">
+        <div class="logo-small">
+            <img src="./imagens/logo.png" alt="Golden" class="logo-small-img"
+                 onerror="this.style.display='none';">
+        </div>
+        <h1>GOLDEN SHOPPING</h1>
+        <p class="subtitle">Sistema de Cardápio Semanal</p>
+
+        <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" id="nome" placeholder="Seu nome e sobrenome" autocomplete="name">
+        </div>
+
+        <div class="form-group">
+            <label>Setor / Cargo</label>
+            <select id="cargo">
+                <option value="">Selecione seu setor/cargo</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Recursos Humanos">Recursos Humanos</option>
+                <option value="TI">Tecnologia da Informação</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Segurança">Segurança</option>
+                <option value="Portaria">Portaria</option>
+                <option value="Limpeza">Limpeza</option>
+                <option value="Manutenção">Manutenção</option>
+                <option value="Recepção">Recepção</option>
+                <option value="Atendimento">Atendimento</option>
+                <option value="Operacional">Operacional</option>
+                <option value="Gerência">Gerência</option>
+                <option value="Estacionamento">Estacionamento</option>
+                <option value="Jurídico">Jurídico</option>
+                <option value="Compras">Compras</option>
+                <option value="Contabilidade">Contabilidade</option>
+                <option value="Outro">Outro</option>
+            </select>
+        </div>
+
+        <button class="btn-primary" onclick="continuar()">
+            CONTINUAR <i class="fas fa-arrow-right"></i>
+        </button>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         TELA DE SELEÇÃO DE DIAS
+    ═══════════════════════════════════════════════ -->
+    <section id="tela-dias" class="container hidden">
+        <h2>SEUS DIAS DE TRABALHO</h2>
+        <p class="subtitle">Selecione todos os dias que você trabalha esta semana</p>
+        <div class="dias-grid" id="dias-lista"></div>
+        <button class="btn-primary btn-confirmar-dias" id="btn-confirmar-dias" onclick="confirmarDias()" disabled>
+            <i class="fas fa-check"></i> CONFIRMAR DIAS
+        </button>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         TELA DE SELEÇÃO DE PRATOS
+    ═══════════════════════════════════════════════ -->
+    <section id="tela-pratos" class="container hidden">
+        <div class="dia-header">
+            <div class="progresso-info" id="progresso-info"></div>
+            <h2 id="dia-titulo">SEGUNDA-FEIRA</h2>
+        </div>
+        <p class="subtitle">Escolha o prato do dia</p>
+        <div class="pratos-grid" id="pratos-lista"></div>
+        <button class="btn-primary btn-confirmar-prato" id="btn-confirmar-prato" onclick="confirmarPrato()" disabled>
+            <i class="fas fa-utensils"></i> CONFIRMAR PRATO
+        </button>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         TELA FINAL
+    ═══════════════════════════════════════════════ -->
+    <section id="tela-final" class="hidden tela-final-wrapper">
+        <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+        <h2 class="titulo-final">PEDIDO REALIZADO!</h2>
+        <p class="subtitle">Seu cardápio da semana foi registrado com sucesso.<br>Clique abaixo para enviar ao grupo.</p>
+        <div class="resumo-pedido" id="resumo-pedido"></div>
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">
+            <i class="fab fa-whatsapp"></i> ENVIAR AO GRUPO
+        </button>
+        <p class="aviso-final">Aguarde o próximo ciclo para fazer um novo pedido.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         TELA JÁ ENVIADO
+    ═══════════════════════════════════════════════ -->
+    <section id="tela-ja-enviado" class="hidden tela-final-wrapper">
+        <div class="check-icon check-icon-gold"><i class="fas fa-clock"></i></div>
+        <h2 class="titulo-final">JÁ ENVIADO!</h2>
+        <p class="subtitle">Você já realizou seu pedido desta semana.<br>Aguarde o próximo ciclo.</p>
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">
+            <i class="fab fa-whatsapp"></i> REENVIAR AO GRUPO
+        </button>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         PAINEL ADMINISTRADOR
+    ═══════════════════════════════════════════════ -->
+    <section id="painel-adm" class="hidden">
+        <div class="adm-wrapper">
+            <div class="adm-header">
+                <div class="adm-titulo">
+                    <i class="fas fa-shield-alt" style="color: var(--gold);"></i>
+                    <h2>Painel Administrativo</h2>
+                </div>
+                <button class="btn-fechar-adm" onclick="fecharAdm()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Abas -->
+            <div class="adm-tabs">
+                <button class="tab-btn active" id="tab-btn-funcionarios" onclick="mudarAba('funcionarios')">
+                    <i class="fas fa-users"></i> Funcionários
+                </button>
+                <button class="tab-btn" id="tab-btn-cardapio" onclick="mudarAba('cardapio')">
+                    <i class="fas fa-utensils"></i> Editar Cardápio
+                </button>
+            </div>
+
+            <!-- ─── ABA: FUNCIONÁRIOS ─── -->
+            <div id="aba-funcionarios" class="tab-content">
+                <div class="adm-actions-bar">
+                    <button class="btn-adm btn-blue" onclick="carregarListaFuncionarios()">
+                        <i class="fas fa-sync"></i> Atualizar Lista
+                    </button>
+                    <div class="adm-stats" id="adm-stats"></div>
+                </div>
+                <div id="lista-itens" class="lista-funcionarios-container"></div>
+            </div>
+
+            <!-- ─── ABA: EDITAR CARDÁPIO ─── -->
+            <div id="aba-cardapio" class="tab-content hidden">
+                <div class="form-group">
+                    <label>Dia da Semana</label>
+                    <select id="adm-dia-select" onchange="carregarCardapioDia()">
+                        <option value="">Selecione o dia...</option>
+                        <option value="Segunda-Feira">Segunda-Feira</option>
+                        <option value="Terça-Feira">Terça-Feira</option>
+                        <option value="Quarta-Feira">Quarta-Feira</option>
+                        <option value="Quinta-Feira">Quinta-Feira</option>
+                        <option value="Sexta-Feira">Sexta-Feira</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Pratos do Dia <small style="color:#888;">(um por linha)</small></label>
+                    <textarea
+                        id="adm-pratos-textarea"
+                        rows="8"
+                        placeholder="Digite um prato por linha:&#10;Frango Grelhado&#10;Bife Acebolado&#10;Peixe Grelhado&#10;Espaguete&#10;Salada Completa"
+                        oninput="atualizarPreviewPratos()"
+                    ></textarea>
+                </div>
+
+                <div id="adm-preview-count" class="adm-preview-count"></div>
+
+                <div class="adm-botoes-cardapio">
+                    <button class="btn-adm btn-green" onclick="salvarPratos()">
+                        <i class="fas fa-save"></i> Salvar Pratos
+                    </button>
+                    <button class="btn-adm btn-gold" onclick="enviarAtualizacao()">
+                        <i class="fas fa-paper-plane"></i> Enviar Atualização
+                    </button>
+                    <button class="btn-adm btn-red" onclick="resetarCardapioGlobal()">
+                        <i class="fas fa-trash"></i> Reset Global
+                    </button>
+                </div>
+
+                <div id="adm-feedback" class="adm-feedback hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         BOTÃO OCULTO DO ADM
+    ═══════════════════════════════════════════════ -->
+    <div id="botao-adm-oculto" onclick="abrirAdm()" title="ADM"></div>
+
+    <script src="./app.js"></script>
+</body>
+</html>
