@@ -1,0 +1,7 @@
+node_modules/
+auth_info/
+creds.json
+.env
+logs/
+*.log
+.DS_Store
