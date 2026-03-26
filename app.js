@@ -446,20 +446,33 @@ function mostrarTelaJaEnviado() {
 // ════════════════════════════════════════════════════
 function enviarWhatsApp() {
     const hoje = new Date();
-    const dataFormatada = hoje.toLocaleDateString('pt-BR', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-    });
 
-    let msg = '🍽️ *PEDIDO SEMANAL — GOLDEN*\n\n';
-    msg += `👤 *${userData.nome}*\n`;
-    msg += `💼 ${userData.cargo} · ${dataFormatada}\n\n`;
+    // Data de início da semana (segunda) e fim (domingo)
+    const diaSemana = hoje.getDay(); // 0=dom, 1=seg...
+    const diffSeg = (diaSemana === 0 ? -6 : 1 - diaSemana);
+    const segunda = new Date(hoje);
+    segunda.setDate(hoje.getDate() + diffSeg);
+    const domingo = new Date(segunda);
+    domingo.setDate(segunda.getDate() + 6);
+
+    const fmt = (d) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    const periodoSemana = `${fmt(segunda)} a ${fmt(domingo)}`;
+
+    let msg = '*Golden Cardápio* 🍴\n';
     msg += '━━━━━━━━━━━━━━━\n';
+    msg += `👤  • *Nome:*  ${userData.nome}\n`;
+    msg += `💼  • *Setor:*  ${userData.cargo}\n`;
+    msg += `🗓️  • ${periodoSemana}\n`;
+    msg += '━━━━━━━━━━━━━━━\n';
+    msg += ' 📆 *CARDÁPIO SEMANAL*\n';
 
     Object.entries(pedidosSemana).forEach(([dia, prato]) => {
-        msg += `▪️ *${dia}* → ${prato}\n`;
+        msg += ` 🔸${dia}🔸\n`;
+        msg += `    • ${prato}\n`;
     });
 
-    msg += '━━━━━━━━━━━━━━━';
+    msg += '━━━━━━━━━━━━━━━\n';
+    msg += '✨ _É fácil ser feliz aqui_ ✨';
 
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
